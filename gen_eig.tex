@@ -1,0 +1,203 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}\usepackage{bm}
+\usepackage{colortbl}\usepackage{multirow}\usepackage{url}
+\usepackage{placeins}
+\usepackage{hhline}
+\usepackage{colonequals}
+\usepackage{tikz}
+\renewcommand{\topfraction}{1}
+\renewcommand{\bottomfraction}{1}
+\renewcommand{\textfraction}{0}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\def\R{ {\mathbb R}}\def\C{ {\mathbb C}}\def\N{ {\mathbb N}}
+\def\H{{\cal H}}\def\P{{\mathbb P}}\def\Z{{\mathbb Z}}
+\def\alt{\mathrel{\raisebox{-.75ex}{$\mathop{\sim}\limits^{\textstyle <}$}}}
+\def\ctp{^{\rm H}}\def\dia{{\rm diag}}\def\fro{_{\rm F}}\def\trp{^{\rm T}}
+\def\trace{\operatorname{tr}}
+\def\adj{^{*}}
+\def\inv{^{-1}}\def\itp{^{\rm -T}}\def\unv{{\bf e}}\def\exc{{\rm exc}}
+\def\real{\mbox{\rm Re}}\def\imag{\mbox{\rm Imag}}
+\def\qed{\rule{1.2ex}{1.2ex}}\def\conj#1{\overline{#1}}
+\def\fl{\mbox{fl}}\def\op{\, \mbox{op}\,}\def\sign{\mbox{sign}}
+\def\eqand{\qquad\mbox{and}\qquad}
+\def\rank{{\rm rank}}
+\def\range{{\cal R}}
+\def\nullspace{{\cal N}}
+\def\vec#1{{\bf #1}}
+\def\T{{\rm T}}
+\def\pT{{\prime\, \T}}
+\def\H{{\rm H}}
+\def\th#1{\tilde{\hat{#1}}}
+\def\e#1{{\times}10^{#1}}
+\def\diag{\mbox{diag}}
+\newcommand{\minprobc}[3]{
+  \begin{array}{ll}
+    \mbox{min}_{#1} & #2 \\
+    \rule{0pt}{1.1em}\mbox{subject to} & #3
+  \end{array} }
+
+\newenvironment{mtx}[1]{\left[\begin{array}{#1}}{\end{array}\right]}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+% Put paragraph indentation in enumerate environment.
+\let\oldenumerate=\enumerate
+\renewenvironment{enumerate}{\oldenumerate\parindent=1.5em}{\endlist}
+
+\bibliographystyle{siam}
+\title{A Stabilized Explicit Method for Generalized Eigenvalue Problem}
+\author{Michael Stewart\thanks{Department of Mathematics and Statistics,
+    Georgia State University, Atlanta GA 30303, {\tt mastewart@gsu.edu}}}
+\begin{document}
+\maketitle
+\begin{abstract}
+  Given matrices $A$ and $B$, this paper gives an error analysis
+  of the solution of the generalized eigenvalue problem using
+  a shift and invert strategy.
+\end{abstract}
+% \begin{keywords}
+%   product SVD, product $URV$, product singular values, rank deficiency
+% \end{keywords}
+% \begin{AMS}
+%   65F, 65F15
+% \end{AMS}
+\pagestyle{myheadings}
+\thispagestyle{plain}
+
+\section{Background}
+\label{sec:background}
+
+In what follows $A$ and $B$ are $n\times n$ matrices and our goal is
+to solve the generalized eigenvalue problem
+\begin{equation}
+  \label{eq:gen_eig}
+  \beta A \vec{x} = \alpha B \vec{x}
+\end{equation}
+for $\vec{x}\neq \vec{0}$ and where $\beta$ and $\alpha$ are not both
+zero.  We assume $A$ and $B$ are real, although this is not essential.
+The matrix pencil associated with this problem is represented by the
+pair $(A,B)$ and the eigenvalues by $(\alpha, \beta)$.  The
+representation of eigenvalues in this way is nonunique, with an entire
+set of $\{(c\alpha, c\beta): c \in \C, c\neq 0\}$ of pairs satisfying
+(\ref{eq:gen_eig}).
+
+\begin{lemma}
+  Suppose that $A$ and $B$ are $n\times n$ and that $B$ is invertible.
+  Define
+  \begin{equation*}
+    C = 
+    \begin{mtx}{cc}
+      A & B
+    \end{mtx}.
+  \end{equation*}
+  Then
+  \begin{equation*}
+    \kappa_2(B) \leq \kappa_2(C) \cdot \sqrt{1 + \|B^{-1} A\|_2^2}.
+  \end{equation*}
+\end{lemma}
+\begin{proof}
+We take the compact SVD
+\begin{equation*}
+  \begin{mtx}{cc}
+    B^{-1}A & I
+  \end{mtx} = U \Sigma V_1^\T
+\end{equation*}
+where $U^\T U=I_n$, $V_1^\T V_1 = I_n$, and
+$\Sigma = \diag(\sigma_1, \ldots, \sigma_n)$.  We have
+$C = CV_1 V_1^\T$ which implies that $C$ and $CV_1$ have the same
+singular values.  We also have
+\begin{equation*}
+  \sigma_1 = \sqrt{1 + \|B^{-1}A\|_2^2}, \eqand
+  \sigma_n \geq 1.
+\end{equation*}
+Since
+\begin{equation*}
+  C = B U \Sigma V_1^\T
+\end{equation*}
+we have
+\begin{equation*}
+  B = CV_1 \Sigma^{-1} U^\T.
+\end{equation*}
+It follows that
+\begin{equation*}
+ \|B\|_2 \leq
+ \|C\|_2 / \sigma_n \leq \|C\|_2
+\end{equation*}
+and
+\begin{equation*}
+  \|B^{-1}\|_2 \leq \|C^{-1}\|_2 \cdot \sigma_1 =
+  \|C^{-1}\|_2 \sqrt{1+\|B^{-1}A\|_2^2}.
+\end{equation*}
+\end{proof}
+
+\begin{lemma}
+  If $B-\sigma A$ is nonsingular and $A\neq 0$, then
+  \begin{equation*}
+    \frac{1}{\|(B-\sigma A)^{-1} A\|_2}
+     =
+    \min_{\det(B -\sigma A - AE )=0} \|E\|_2
+  \end{equation*}
+\end{lemma}
+\begin{proof}
+  Consider the generalized singular value decomposition
+  \begin{equation*}
+    B - \sigma A = S I U^\T,\eqand
+    A = S D V^\T
+  \end{equation*}
+  where $S=(B-\sigma A)U$ is invertible,
+  $(B-\sigma A)^{-1}A = U D V^\T$, $U$ and $V$ are orthogonal, and
+  $D = \diag(d_1, \ldots, d_n)$ with $d_k\geq 0$ nonincreasing for
+  $k=1,2,\ldots, n$.  Clearly
+  $B-\sigma A - AE = S (I - D V^\T E U) U^\T$ is singular if and only
+  if $(I - D V^\T E U)$ is singular which implies that
+  $\|E\|_2 \|D\|_2 \geq 1$ so that
+  \begin{equation*}
+    \min_{\det(B -\sigma A - AE )=0} \|E\|_2 \geq \frac{1}{d_1} = \frac{1}{\|(B-\sigma A)^{-1}A\|_2}.
+  \end{equation*}
+  Let  
+  \begin{equation*}
+    \hat{E} = \frac{1}{d_1}V \vec{e}_1 \vec{e}_1^\T U^\T.
+  \end{equation*}
+  Then
+  \begin{equation*}
+    B-\sigma A - A \hat{E} = S (I-\vec{e}_1 \vec{e}_1^\T) U^\T
+  \end{equation*}
+  is singular so that
+  \begin{equation*}
+    \min_{\det(B -\sigma A - AE )=0} \|E\|_2 \leq \|\hat{E}\|_2 = \frac{1}{d_1} = \frac{1}{\|(B-\sigma A)^{-1} A\|_2}.
+  \end{equation*}
+\end{proof}
+
+For $\epsilon \geq 0$ Define
+\begin{equation}
+  \Sigma_\epsilon =
+  \left\{ \sigma : \mbox{$B-\sigma A - \epsilon A E$ is singular for some $\|E\|_2\leq 1$}
+  \right\}.
+\end{equation}
+If $A$ is invertible, then this set is easily seen to be the
+$\epsilon$-pseudospectrum of $A^{-1}B$.  The lemma then implies that
+\begin{equation*}
+  \|(B-\sigma A)^{-1} A\|_2 \geq \frac{1}{\epsilon}
+\end{equation*}
+if and only if $\sigma \in \Sigma_\epsilon$.  Define
+\begin{equation}
+  \eta = \frac{\|B-\sigma A\|_2}{\|A\|_2}.
+\end{equation}
+and
+\begin{equation}
+  X = (B-\sigma A)^{-1} A
+\end{equation}
+In what follows we are concerned with the size of $\eta \|X\|_2$.
+
+
+
+
+
+\bibliography{/home/mas/work/bib/ref}
+
+
+\end{document}

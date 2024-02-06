@@ -1,19 +1,21 @@
 \documentclass[12pt]{article}
 \usepackage[margin=1.25in]{geometry}
+\usepackage{mathtools}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amsfonts}\usepackage{bm}
+\usepackage{amssymb}
 \usepackage{colortbl}\usepackage{multirow}\usepackage{url}
 \usepackage{placeins}
 \usepackage{hhline}
-\usepackage{colonequals}
+%\usepackage{colonequals}
 \usepackage{tikz}
 \renewcommand{\topfraction}{1}
 \renewcommand{\bottomfraction}{1}
 \renewcommand{\textfraction}{0}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \def\R{ {\mathbb R}}\def\C{ {\mathbb C}}\def\N{ {\mathbb N}}
-\def\H{{\cal H}}\def\P{{\mathbb P}}\def\Z{{\mathbb Z}}
+\def\P{{\mathbb P}}\def\Z{{\mathbb Z}}
 \def\alt{\mathrel{\raisebox{-.75ex}{$\mathop{\sim}\limits^{\textstyle <}$}}}
 \def\ctp{^{\rm H}}\def\dia{{\rm diag}}\def\fro{_{\rm F}}\def\trp{^{\rm T}}
 \def\trace{\operatorname{tr}}
@@ -48,16 +50,22 @@
 \let\oldenumerate=\enumerate
 \renewenvironment{enumerate}{\oldenumerate\parindent=1.5em}{\endlist}
 
-\bibliographystyle{siam}
-\title{A Stabilized Explicit Method for Generalized Eigenvalue Problem}
-\author{Michael Stewart\thanks{Department of Mathematics and Statistics,
-    Georgia State University, Atlanta GA 30303, {\tt mastewart@gsu.edu}}}
+\bibliographystyle{siam} \title{On the Inversion in the Solution of
+  the Generalized Eigenvalue Problem} \author{Michael
+  Stewart\thanks{Department of Mathematics and Statistics, Georgia
+    State University, Atlanta GA 30303, {\tt mastewart@gsu.edu}}}
 \begin{document}
 \maketitle
 \begin{abstract}
-  Given matrices $A$ and $B$, this paper gives an error analysis
-  of the solution of the generalized eigenvalue problem using
-  a shift and invert strategy.
+  Given matrices $A$ and $B$, this paper gives an error analysis of
+  the solution of the generalized eigenvalue problem using a shift and
+  invert strategy.  The analysis identifies circumstances under which
+  the solution can be expected to satisfy useful error bounds.  The
+  conditions are notably weaker than requiring that one of the
+  matrices, or a shift of one of the matrices, be well conditioned.
+  When the conditions of the formal analysis do not guarantee
+  stability, an orthogonalization procedure is empirically shown to
+  help restore stability in some cases.
 \end{abstract}
 % \begin{keywords}
 %   product SVD, product $URV$, product singular values, rank deficiency
@@ -71,128 +79,348 @@
 \section{Background}
 \label{sec:background}
 
-In what follows $A$ and $B$ are $n\times n$ matrices and our goal is
-to solve the generalized eigenvalue problem
+In what follows $A$ and $B$ are $n\times n$ nonzero complex matrices
+that are not necessarily hermitian.  Our goal is to solve the
+generalized eigenvalue problem
 \begin{equation}
-  \label{eq:gen_eig}
-  \beta A \vec{x} = \alpha B \vec{x}
+  \label{eq:gen_eig1}
+  A\vec{v} = \lambda B \vec{v}, \qquad \vec{v} \neq \vec{0}
 \end{equation}
-for $\vec{x}\neq \vec{0}$ and where $\beta$ and $\alpha$ are not both
-zero.  We assume $A$ and $B$ are real, although this is not essential.
-The matrix pencil associated with this problem is represented by the
-pair $(A,B)$ and the eigenvalues by $(\alpha, \beta)$.  The
-representation of eigenvalues in this way is nonunique, with an entire
-set of $\{(c\alpha, c\beta): c \in \C, c\neq 0\}$ of pairs satisfying
-(\ref{eq:gen_eig}).
+or, equivalently, the alternate formulation
+\begin{equation}
+  \label{eq:gen_eig2}
+  \beta A \vec{v} = \alpha B \vec{v}, \qquad \vec{v}\neq \vec{0},
+\end{equation}
+where $\beta$ and $\alpha$ are not both zero and
+$\lambda = \alpha/\beta$.  If $\beta = 0$, we set $\lambda = \infty$.
+If $A$ and $B$ have a common null space, then any common null vector
+would satisfy \eqref{eq:gen_eig1} or \eqref{eq:gen_eig2} for any
+choice of $\lambda$ or $\alpha$ and $\beta$.  We therefore require
+that the intersection of the null spaces of $A$ and $B$ be trivial.
+The problem is fully defined by the pair $(A,B)$ and the eigenvalues
+by $(\alpha, \beta)$.  When the context is clear, we will often simply
+refer to eigenvalues and eigenvectors instead of generalized
+eigenvalues and eigenvectors.
+
+If $B$ is nonsingular, then \eqref{eq:gen_eig1} can be converted to
+the ordinary eigenvalue problem by solving $BY = A$ and solving
+$Y \vec{v} = \lambda \vec{v}$.  However, if $B$ is ill conditioned
+then the computed $Y$ will have large errors and the computed
+generalized eigenvalues can be inaccurate, even when they are well
+conditioned \cite{govl:13, stew:01}.  If $B-\sigma A$ is well
+conditioned, then one can instead solve $(B-\sigma A) Y = A$.  If the
+eigenvalues of $Y$ are $\gamma_i$, then the eigenvalues in
+\eqref{eq:gen_eig1} are $\lambda_i = \gamma_i/(1+\sigma\gamma_i)$.
+However, it is not always possible to choose $\sigma$ so that
+$B-\sigma A$ is well conditioned.  Even with the use of a shift, the
+explicit conversion of the generalized eigenvalue problem to an
+ordinary eigenvalue problem is not commonly recommended, except
+perhaps in the use of iterative methods like the Arnoldi algorithm.
+
+The $QZ$ algorithm \cite{most:73} instead solves the generalized
+eigenvalue by computing orthogonal $Q$ and $Z$ for which
+\begin{equation*}
+  A = Q T_a Z^\H, \eqand B = QT_b Z^\H
+\end{equation*}
+where $T_a$ and $T_b$ are upper triangular.  If the $i$th diagonal
+elements of $T_a$ and $T_b$ are $\alpha_i$ and $\beta_i$ respectively,
+then each $(\alpha_i, \beta_i)$ is an eigenvalue of
+\eqref{eq:gen_eig2}.  The decomposition is perfectly backward stable
+so that for $i=1,\ldots, n$ the pairs $(\alpha_i, \beta_i)$ form the
+set of eigenvalues of a pair of matrices close to $(A,B)$.  The
+generalized eigenvectors can be obtained from $Z$ in a manner
+analogous to what is done with a Schur decomposition for the ordinary
+eigenvalue problem.  The only disadvantage of this method is the
+increased cost of the $QZ$ algorithm relative to the cost of computing
+a Schur decomposition of $B^{-1}A$, which can be significant.
+However, given the possible instability associated with forming
+$B^{-1}A$, the $QZ$ algorithm is the standard method for the dense
+nonhermitian generalized eigenvalue problem.
+
+In this paper, we revisit the use of inversion to explicitly convert
+the generalized eigenvalue problem to an ordinary eigenvalue problem
+and show that, with some modifications, the method can be made more
+stable than might be expected from its checkered reputation.  The
+approach involves two components.  First we consider a suitably chosen
+shift $\sigma$ used to compute $X=(A-\sigma B)^{-1} B$ that under some
+fairly restrictive assumptions on $\sigma$ can be shown to stabilize
+the computation of the generalized eigenvalues of $(A,B)$ through the
+solution of the ordinary eigenvalue problem for $X$.  In some cases,
+the shift can be chosen to give residual bounds for the generalized
+eigenvalues and eigenvectors, even when $A-\sigma B$ is severely ill
+conditioned.  Second, since the assumptions on $\sigma$ can often be
+difficult to satisfy when $B^{-1}A$ is nonnormal, we introduce a $QR$
+factorization
+\begin{equation*}
+  \begin{bmatrix}
+    A-\sigma B \\ B
+  \end{bmatrix} =
+  \begin{bmatrix}
+    \hat{A} \\ \hat{B}
+  \end{bmatrix} R
+\end{equation*}
+where the columns of
+$\begin{bmatrix} \hat{A}^\H & \hat{B}^\H \end{bmatrix}^\H$ are
+orthonormal.  The computation then proceeds as before by finding
+eigenvalues $\theta_i$ and corresponding eigenvectors $\vec{u}_i$ of
+\begin{equation*}
+  \hat{X} = \hat{A}^{-1} \hat{B}.
+\end{equation*}
+It is easily seen that $\hat{X} = R X R^{-1}$.  The eigenvalues and
+eigenvectors of \eqref{eq:gen_eig2} are then given by
+$(1+\sigma \theta_i, \theta_i)$ and $\vec{v}_i = R^{-1} \vec{u}_i$.
+The justification for the orthogonalization step is empirical.  We are
+able to identify several mechanisms by which the orthogonalization
+improves residuals for the computed eigenvalues and eigenvectors, but
+one of those mechanisms involves grading in $\hat{X}$ for which the
+$QR$ algorithm performs better than standard error bounds suggest.  It
+is also not difficult to construct problems for which the
+orthogonalization step fails to improve residuals.  Nevertheless, when
+compared to the straightforward approach of forming $B^{-1}A$, the
+method often works well to improve the stability of the method.
+
+\section{Numerical Stability}
+\label{sec:numerical-stability}
+
+In this section, we ultimately prove residual bounds for computed
+generalized eigenvalues and eigenvectors determined from eigenvalues
+and eigenvectors of
+\begin{equation}
+  \label{eq:Xdef}
+  X = (A-\sigma B)^{-1} B.
+\end{equation}
+There are some technical concerns related to scaling and the magnitude
+of the shift $\sigma$, but a rough summary of the results is that we
+can expect to have useful error bounds when $\sigma$ is not in the
+$\epsilon$-pseudospectrum of $B^{-1}A$ for small $\epsilon$.  However,
+we do not want to assume that $B$ is invertible, so we consider a set
+that suits our purposes and is equivalent to the pseudospectrum of
+$B^{-1}A$ when $A$ is invertible.
+
+Let
+\begin{equation}
+  \label{eq:S_def}
+  \mathcal{S}_\delta = 
+  \left\{ E : \mbox{$A - \sigma B (I+E)$ is singular} \right\}.
+\end{equation}
+For $\epsilon \geq 0$ define
+\begin{equation}
+  \Lambda_\epsilon =
+  \left\{ \sigma \in \C: \mbox{there exists $E\in \mathcal{S}_\delta$
+      with $\|E\|_2\leq \epsilon$}
+  \right\}.
+\end{equation}
+Clearly, $\Lambda_0$ is the set of generalized eigenvalues of $(A,B)$,
+possibly excluding $\lambda = \infty$ if $B$ is singular.  If $B$ is
+nonsingular, then the $\epsilon$-pseudospectrum of $B^{-1} A$ is
+\begin{equation*}
+  \left\{ \sigma \in \R: \mbox{$B^{-1}A-\sigma I - \epsilon E$
+      is singular for some $\|E\|_2\leq 1$}\right\}
+\end{equation*}
+which equals $\Lambda_\epsilon$.  Whether or not $B$ is singular,
+$\Lambda_\epsilon$ is the set of $\sigma\in \C$ for which $\sigma$ can
+be made an eigenvalue of $(A, B(I+E))$ by choosing some $E$ with
+$\|E\|_2\leq \epsilon$.  Define
+\begin{equation}
+  \label{eq:delta_def}
+  \delta(\sigma) = \inf \{ \epsilon :
+  \mbox{$\epsilon \geq 0$ and $\sigma \in \Lambda_\epsilon$}\}
+\end{equation}
+The set over which we take the infimum is closed and bounded from
+below so that the infimum is achieved and there exists $E$ with
+$\|E\|_2\leq \delta(\sigma)$ for which $\sigma$ is an eigenvalue of
+$(A, B(I+E))$.  The quantity $\delta(\sigma)$ can be viewed as a
+measure of the distance of $\sigma$ from a generalized eigenvalue of
+$(A,B)$ in a pseudospectral sense in which we are concerned with the
+relative change to $B$ needed to make $\sigma$ a generalized
+eigenvalue instead of the absolute distance of $\sigma$ from the
+nearest generalized eigenvalue $\lambda$ of $(A,B)$.  We refer to
+$\delta(\sigma)$ as the pseudospectral distance of $\sigma$ from a
+generalized eigenvalue of $(A,B)$.
 
 \begin{lemma}
-  Suppose that $A$ and $B$ are $n\times n$ and that $B$ is invertible.
-  Define
+  \label{lm:X_norm_bound}
+  If $A-\sigma B$ is nonsingular, $\sigma \neq 0$, $B\neq 0$, $X$ is
+  defined as in \eqref{eq:X_def}, and $\delta(\sigma)$ is as in
+  \eqref{eq:delta_def}, then
   \begin{equation*}
-    C = 
-    \begin{mtx}{cc}
-      A & B
-    \end{mtx}.
-  \end{equation*}
-  Then
-  \begin{equation*}
-    \kappa_2(B) \leq \kappa_2(C) \cdot \sqrt{1 + \|B^{-1} A\|_2^2}.
-  \end{equation*}
-\end{lemma}
-\begin{proof}
-We take the compact SVD
-\begin{equation*}
-  \begin{mtx}{cc}
-    B^{-1}A & I
-  \end{mtx} = U \Sigma V_1^\T
-\end{equation*}
-where $U^\T U=I_n$, $V_1^\T V_1 = I_n$, and
-$\Sigma = \diag(\sigma_1, \ldots, \sigma_n)$.  We have
-$C = CV_1 V_1^\T$ which implies that $C$ and $CV_1$ have the same
-singular values.  We also have
-\begin{equation*}
-  \sigma_1 = \sqrt{1 + \|B^{-1}A\|_2^2}, \eqand
-  \sigma_n \geq 1.
-\end{equation*}
-Since
-\begin{equation*}
-  C = B U \Sigma V_1^\T
-\end{equation*}
-we have
-\begin{equation*}
-  B = CV_1 \Sigma^{-1} U^\T.
-\end{equation*}
-It follows that
-\begin{equation*}
- \|B\|_2 \leq
- \|C\|_2 / \sigma_n \leq \|C\|_2
-\end{equation*}
-and
-\begin{equation*}
-  \|B^{-1}\|_2 \leq \|C^{-1}\|_2 \cdot \sigma_1 =
-  \|C^{-1}\|_2 \sqrt{1+\|B^{-1}A\|_2^2}.
-\end{equation*}
-\end{proof}
-
-\begin{lemma}
-  If $B-\sigma A$ is nonsingular and $A\neq 0$, then
-  \begin{equation*}
-    \frac{1}{\|(B-\sigma A)^{-1} A\|_2}
-     =
-    \min_{\det(B -\sigma A - AE )=0} \|E\|_2
+     \delta(\sigma) 
+     = \frac{1}{\|\sigma X\|_2}
   \end{equation*}
 \end{lemma}
 \begin{proof}
   Consider the generalized singular value decomposition
   \begin{equation*}
-    B - \sigma A = S I U^\T,\eqand
-    A = S D V^\T
+    A - \sigma B = S I U^\H,\eqand
+    \sigma B = S D V^\H
   \end{equation*}
-  where $S=(B-\sigma A)U$ is invertible,
-  $(B-\sigma A)^{-1}A = U D V^\T$, $U$ and $V$ are orthogonal, and
-  $D = \diag(d_1, \ldots, d_n)$ with $d_k\geq 0$ nonincreasing for
-  $k=1,2,\ldots, n$.  Clearly
-  $B-\sigma A - AE = S (I - D V^\T E U) U^\T$ is singular if and only
-  if $(I - D V^\T E U)$ is singular which implies that
-  $\|E\|_2 \|D\|_2 \geq 1$ so that
+  where $S=(A-\sigma B)U$ is invertible,
+  $(A-\sigma B)^{-1}\sigma B = U D V^\H$, $U$ and $V$ are unitary, and
+  $D = \diag(d_1, \ldots, d_n)$ with $d_1 > 0$ and $d_k\geq 0$
+  nonincreasing for $k=1,2,\ldots, n$.  Suppose that
+  $A-\sigma B(I+ E)$.  Clearly
+  $A-\sigma B (I+E) = S (I - D V^\H E U) U^\H$ is
+  singular if and only if $(I - D V^\H E U)$ is singular which implies
+  that $\|E\|_2 \|D\|_2 \geq 1$ and
   \begin{equation*}
-    \min_{\det(B -\sigma A - AE )=0} \|E\|_2 \geq \frac{1}{d_1} = \frac{1}{\|(B-\sigma A)^{-1}A\|_2}.
+    \delta(\sigma)
+    \geq \frac{1}{d_1} =
+    \frac{1}{\|(A-\sigma B)^{-1}\sigma B\|_2}.
   \end{equation*}
   Let  
   \begin{equation*}
-    \hat{E} = \frac{1}{d_1}V \vec{e}_1 \vec{e}_1^\T U^\T.
+    \hat{E} = \frac{1}{d_1}V \vec{e}_1 \vec{e}_1^\H U^\H.
   \end{equation*}
   Then
   \begin{equation*}
-    B-\sigma A - A \hat{E} = S (I-\vec{e}_1 \vec{e}_1^\T) U^\T
+    A-\sigma B (I+\hat{E}) = S (I-\vec{e}_1 \vec{e}_1^\H) U^\H
   \end{equation*}
   is singular so that
   \begin{equation*}
-    \min_{\det(B -\sigma A - AE )=0} \|E\|_2 \leq \|\hat{E}\|_2 = \frac{1}{d_1} = \frac{1}{\|(B-\sigma A)^{-1} A\|_2}.
+    \delta(\sigma)
+    \leq \|\hat{E}\|_2 
+    = \frac{1}{d_1} = \frac{1}{\|(A-\sigma B)^{-1} \sigma B\|_2}.
   \end{equation*}
 \end{proof}
 
-For $\epsilon \geq 0$ Define
-\begin{equation}
-  \Sigma_\epsilon =
-  \left\{ \sigma : \mbox{$B-\sigma A - \epsilon A E$ is singular for some $\|E\|_2\leq 1$}
-  \right\}.
-\end{equation}
-If $A$ is invertible, then this set is easily seen to be the
-$\epsilon$-pseudospectrum of $A^{-1}B$.  The lemma then implies that
+If $B=I$ then Lemma~\ref{lm:X_norm_bound} reduces to
 \begin{equation*}
-  \|(B-\sigma A)^{-1} A\|_2 \geq \frac{1}{\epsilon}
+  \delta(\sigma) = 
 \end{equation*}
-if and only if $\sigma \in \Sigma_\epsilon$.  Define
+
+
+We define
 \begin{equation}
-  \eta = \frac{\|B-\sigma A\|_2}{\|A\|_2}.
+  \label{eq:eta_def}
+  \eta = \frac{\|A-\sigma B\|_2}{\|B\|_2},
 \end{equation}
 and
 \begin{equation}
-  X = (B-\sigma A)^{-1} A
+  \label{eq:sigma0_def}
+  \sigma_0 = \sigma \frac{\|B\|_2}{\|A\|_2}.
 \end{equation}
-In what follows we are concerned with the size of $\eta \|X\|_2$.
+\begin{lemma}
+  \label{lm:eta_X_bound}
+  Suppose that $\sigma\neq 0$ and $\sigma \notin \Lambda_0$.  Then
+  \begin{equation*}
+    \eta \|X\|_2 \leq \left(1 + \frac{1}{|\sigma_0|}\right)
+    \frac{1}{\delta(\sigma)}.
+  \end{equation*}
+\end{lemma}
+\begin{proof}
+  We have
+  \begin{multline*}
+    \eta \|X\|_2
+    = \frac{\|A-\sigma B\|_2}{\|B\|_2} \frac{1}{|\sigma| \delta(\sigma)}
+    \leq \frac{\|A\|_2+|\sigma| \|B\|_2}{|\sigma|\|B\|_2} \frac{1}{\delta(\sigma)}
+    = \frac{\|A\|_2+|\sigma_0| \|A\|_2}{|\sigma_0|\|A\|_2} \frac{1}{\delta(\sigma)}.
+  \end{multline*}
+\end{proof}
 
+\begin{theorem}
+  \label{th:deflating_subspaces}
+  Suppose that $A-\sigma B$ is nonsingular, and that there exist
+  $a_n\geq 0$ and $b_n\geq 0$ depending solely on $n$ for which the
+  computed $X$ satisfies
+  \begin{equation}
+    \label{eq:Xerror}
+    \left\| (A-\sigma B) X - B \right\|_2 \leq u a_n \|A-\sigma B\|_2 \|X\|_2
+  \end{equation}
+  and the computed Schur factor $T$ of $X$ is nonsingular and satisfies
+  \begin{equation}
+    \label{eq:schur_error}
+    \| X - \tilde{Q} T \tilde{Q}^\H \|_2 \leq u b_n \|X\|_2,
+  \end{equation}
+  where $\tilde{Q}$ is exactly unitary.  Then there exist $E$ and $F$
+  satisfying
+  \begin{equation*}
+    (A+E)\tilde{Q} T = (B+F)\tilde{Q}(I+\sigma T)
+  \end{equation*}
+  with
+  \begin{equation*}
+    \left\|
+      \begin{bmatrix}
+        \frac{E}{\|A\|_2} & \frac{F}{\|B\|_2}
+      \end{bmatrix}
+    \right\|_2 \leq u (a_n + b_n)(1+|\sigma_0|) \eta \|X\|_2.
+  \end{equation*}
+\end{theorem}
+\begin{proof}
+  Define $G_0 = (A-\sigma B) X - B$ and $G_1 = X - \tilde{Q}T\tilde{Q}^\H$.  Then
+  \begin{equation*}
+    (A-\sigma B) \tilde{Q} T 
+    = (A-\sigma B) X \tilde{Q} - (A-\sigma B) G_1 \tilde{Q}
+    = B\tilde{Q} + G_0\tilde{Q} - (A-\sigma B) G_1 \tilde{Q}
+  \end{equation*}
+  so that
+  \begin{equation*}
+    A \tilde{Q} T= B \tilde{Q} (I+\sigma T) + G_0 \tilde{Q} - (A-\sigma B)G_1 \tilde{Q}.
+  \end{equation*}
+  Defining
+  \begin{equation*}
+    G = G_0 \tilde{Q} - (A-\sigma B)G_1 \tilde{Q}
+  \end{equation*}
+  we have
+  \begin{equation*}
+    \|G\|_2
+    \leq u (a_n + b_n) \|A-\sigma B\|_2 \|X\|_2
+    = u (a_n + b_n) \eta \|X\|_2 \|B\|_2.
+  \end{equation*}
+  We have $(A+E)\tilde{Q} = (B+F)\tilde{Q}(I+\sigma T)$ if and only if
+  \begin{equation*}
+    \|B\|_2 \begin{bmatrix}
+      -\frac{E\tilde{Q}}{\|A\|_2} & \frac{F\tilde{Q}}{\|B\|_2}
+    \end{bmatrix}
+    \begin{bmatrix}
+      -\|A\|_2 T / \|B\|_2 \\ I + \sigma T
+    \end{bmatrix}
+    = G.
+  \end{equation*}
+  If we define
+  \begin{equation*}
+    C
+    =
+    \begin{bmatrix}
+      -\|A\|_2 T / \|B\|_2 \\ I + \sigma T
+    \end{bmatrix}
+  \end{equation*}
+  then using the fact that $T$ is nonsingular and $A \neq 0$ implies
+  that $C$ has linearly independent columns.  One choice for $E$ and
+  $F$ that satisfies the above relation is then given by
+  \begin{equation*}
+    \begin{bmatrix}
+      -\frac{E\tilde{Q}}{\|A\|_2} & \frac{F\tilde{Q}}{\|B\|_2}
+    \end{bmatrix} = \frac{1}{\|B\|_2} G C^{\dagger}
+  \end{equation*}
+  where $C^{\dagger}$ is the pseudoinverse of $C$.  Clearly $\sigma_n(C)\neq 0$ and
+  $\|C^\dagger\|_2 = 1/\sigma_n(C)$.  We consider two cases.  Given a
+  vector $\vec{x}$ with $\|\vec{x}\|_2 = 1$, either
+  \begin{equation*}
+    \|T\vec{x}\|_2 \leq \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2},
+    \qquad\mbox{or}\qquad
+    \|T\vec{x}\|_2 > \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2}.
+  \end{equation*}
+  In the first case we have
+  \begin{multline*}
+    \|(I + \sigma T) \vec{x}\|_2
+    \geq \|\vec{x}\|_2 - |\sigma| \|T\vec{x}\|
+    \geq 1 - \frac{|\sigma| \|B\|_2}{(1+|\sigma_0|)\|A\|_2}\\
+    = 1 - \frac{|\sigma_0| \|A\|_2}{(1+|\sigma_0|)\|A\|_2}
+    = \frac{1}{1+|\sigma_0|}.
+  \end{multline*}
+  The second case immediately gives
+  \begin{equation*}
+    \frac{\|A\|_2\|T\vec{x}\|_2}{\|B\|_2}  > \frac{1}{1+|\sigma_0|}.
+  \end{equation*}
+  It follows that $\|C\vec{x}\| \geq 1/(1+|\sigma_0|)$ so that $\|C^{\dagger}\|_2\leq (1+|\sigma_0|)$ and
+  \begin{equation*}
+    \begin{bmatrix}
+      \frac{E}{\|A\|_2} & \frac{F}{\|B\|_2}
+    \end{bmatrix}
+    \leq \frac{1+|\sigma_0|}{\|B\|_2} \|G\|_2
+    \leq u(a_n+b_n) (1+|\sigma_0|)\eta \|X\|_2.
+  \end{equation*}
+\end{proof}
 
 
 

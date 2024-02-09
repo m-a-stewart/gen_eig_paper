@@ -370,12 +370,12 @@ when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
   and the computed Schur factor $T$ of $X$ is nonsingular and satisfies
   \begin{equation}
     \label{eq:schur_error}
-    \| X - \tilde{Q} T \tilde{Q}^\H \|_2 \leq u b_n \|X\|_2,
+    \| X - \tilde{Z} T \tilde{Z}^\H \|_2 \leq u b_n \|X\|_2,
   \end{equation}
-  where $\tilde{Q}$ is exactly unitary.  Then there exist $E$ and $F$
+  where $\tilde{Z}$ is exactly unitary.  Then there exist $E$ and $F$
   satisfying
   \begin{equation*}
-    (A+E)\tilde{Q} T = (B+F)\tilde{Q}(I+\sigma T)
+    (A+E)\tilde{Z} T = (B+F)\tilde{Z}(I+\sigma T)
   \end{equation*}
   with
   \begin{equation*}
@@ -387,19 +387,19 @@ when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
   \end{equation*}
 \end{theorem}
 \begin{proof}
-  Define $G_0 = (A-\sigma B) X - B$ and $G_1 = X - \tilde{Q}T\tilde{Q}^\H$.  Then
+  Define $G_0 = (A-\sigma B) X - B$ and $G_1 = X - \tilde{Z}T\tilde{Z}^\H$.  Then
   \begin{equation*}
-    (A-\sigma B) \tilde{Q} T 
-    = (A-\sigma B) X \tilde{Q} - (A-\sigma B) G_1 \tilde{Q}
-    = B\tilde{Q} + G_0\tilde{Q} - (A-\sigma B) G_1 \tilde{Q}
+    (A-\sigma B) \tilde{Z} T 
+    = (A-\sigma B) X \tilde{Z} - (A-\sigma B) G_1 \tilde{Z}
+    = B\tilde{Z} + G_0\tilde{Z} - (A-\sigma B) G_1 \tilde{Z}
   \end{equation*}
   so that
   \begin{equation*}
-    A \tilde{Q} T= B \tilde{Q} (I+\sigma T) + G_0 \tilde{Q} - (A-\sigma B)G_1 \tilde{Q}.
+    A \tilde{Z} T= B \tilde{Z} (I+\sigma T) + G_0 \tilde{Z} - (A-\sigma B)G_1 \tilde{Z}.
   \end{equation*}
   Defining
   \begin{equation*}
-    G = G_0 \tilde{Q} - (A-\sigma B)G_1 \tilde{Q}
+    G = G_0 \tilde{Z} - (A-\sigma B)G_1 \tilde{Z}
   \end{equation*}
   we have
   \begin{equation*}
@@ -407,10 +407,10 @@ when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
     \leq u (a_n + b_n) \|A-\sigma B\|_2 \|X\|_2
     = u (a_n + b_n) \eta \|X\|_2 \|B\|_2.
   \end{equation*}
-  We have $(A+E)\tilde{Q} = (B+F)\tilde{Q}(I+\sigma T)$ if and only if
+  We have $(A+E)\tilde{Z} = (B+F)\tilde{Z}(I+\sigma T)$ if and only if
   \begin{equation*}
     \|B\|_2 \begin{bmatrix}
-      -\frac{E\tilde{Q}}{\|A\|_2} & \frac{F\tilde{Q}}{\|B\|_2}
+      -\frac{E\tilde{Z}}{\|A\|_2} & \frac{F\tilde{Z}}{\|B\|_2}
     \end{bmatrix}
     \begin{bmatrix}
       -\|A\|_2 T / \|B\|_2 \\ I + \sigma T
@@ -430,7 +430,38 @@ when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
   $F$ that satisfies the above relation is then given by
   \begin{equation*}
     \begin{bmatrix}
-      -\frac{E\tilde{Q}}{\|A\|_2} & \frac{F\tilde{Q}}{\|B\|_2}
+      -\frac{E\tilde{Z}}{\|A\|_2} & \frac{F\tilde{Z}}{\|B\|_2}
+    \end{bmatrix} = \frac{1}{\|B\|_2} G C^{\dagger}
+  \end{equation*}
+  where $C^{\dagger}$ is the pseudoinverse of $C$.  Clearly $\sigma_n(C)\neq 0$ and
+  $\|C^\dagger\|_2 = 1/\sigma_n(C)$.  We consider two cases.  Given a
+  vector $\vec{x}$ with $\|\vec{x}\|_2 = 1$, either
+  \begin{equation*}
+    \|T\vec{x}\|_2 \leq \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2},
+    \qquad\mbox{or}\qquad
+    \|T\vec{x}\|_2 > \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2}.
+  \end{equation*}
+  In the first case we have
+  \begin{multline*}
+    \|(I + \sigma T) \vec{x}\|_2
+    \geq \|\vec{x}\|_2 - |\sigma| \|T\vec{x}\|
+    \geq 1 - \frac{|\sigma| \|B\|_2}{(1+|\sigma_0|)\|A\|_2}\\
+    = 1 - \frac{|\sigma_0| \|A\|_2}{(1+|\sigma_0|)\|A\|_2}
+    = \frac{1}{1+|\sigma_0|}.
+  \end{multline*}
+  The second case immediately gives
+  \begin{equation*}
+    \frac{\|A\|_2\|T\vec{x}\|_2}{\|B\|_2}  > \frac{1}{1+|\sigma_0|}.
+  \end{equation*}
+  It follows that $\|C\vec{x}\| \geq 1/(1+|\sigma_0|)$ so that $\|C^{\dagger}\|_2\leq (1+|\sigma_0|)$ and
+  \begin{equation*}
+    \begin{bmatrix}
+      \frac{E}{\|A\|_2} & \frac{F}{\|B\|_2}
+    \end{bmatrix}
+    \leq \frac{1+|\sigma_0|}{\|B\|_2} \|G\|_2
+    \leq u(a_n+b_n) (1+|\sigma_0|)\eta \|X\|_2.
+  \end{equation*}
+\end{proof}
     \end{bmatrix} = \frac{1}{\|B\|_2} G C^{\dagger}
   \end{equation*}
   where $C^{\dagger}$ is the pseudoinverse of $C$.  Clearly $\sigma_n(C)\neq 0$ and

@@ -184,88 +184,86 @@ method often works well to improve the stability of the method.
 
 In this section, we ultimately prove residual bounds for computed
 generalized eigenvalues and eigenvectors determined from eigenvalues
-and eigenvectors of
-\begin{equation}
-  \label{eq:Xdef}
-  X = (A-\sigma B)^{-1} B.
-\end{equation}
-There are some technical concerns related to scaling and the magnitude
-of the shift $\sigma$, but a rough summary of the results is that we
-can expect to have useful error bounds when $\sigma$ is not in the
+and eigenvectors of $(A-\sigma B)^{-1}B$.  There are some technical
+concerns related to scaling and the magnitude of the shift $\sigma$,
+but a rough summary of the results is that we can expect to have
+useful error bounds when $\sigma$ is not in the
 $\epsilon$-pseudospectrum of $B^{-1}A$ for small $\epsilon$.  However,
-we do not want to assume that $B$ is invertible, so we consider a set
+we do not want to assume that $B$ is invertible, so we make a small
+adaptation of standard results on pseudospectra by considering a set
 that suits our purposes and is equivalent to the pseudospectrum of
-$B^{-1}A$ when $A$ is invertible.
+$B^{-1}A$ when $B$ is invertible.
 
 Let
 \begin{equation}
   \label{eq:S_def}
-  \mathcal{S}_\delta = 
-  \left\{ E : \mbox{$A - \sigma B (I+E)$ is singular} \right\}.
+  \mathcal{S}_\sigma = 
+  \left\{ E : \mbox{$A - \sigma B - B E$ is singular} \right\}.
 \end{equation}
 For $\epsilon \geq 0$ define
 \begin{equation}
+  \label{eq:pseudo_def}
   \Lambda_\epsilon =
-  \left\{ \sigma \in \C: \mbox{there exists $E\in \mathcal{S}_\delta$
+  \left\{ \sigma \in \C: \mbox{there exists $E\in \mathcal{S}_\sigma$
       with $\|E\|_2\leq \epsilon$}
   \right\}.
 \end{equation}
 Clearly, $\Lambda_0$ is the set of generalized eigenvalues of $(A,B)$,
 possibly excluding $\lambda = \infty$ if $B$ is singular.  If $B$ is
-nonsingular, then the $\epsilon$-pseudospectrum of $B^{-1} A$ is
-\begin{equation*}
-  \left\{ \sigma \in \R: \mbox{$B^{-1}A-\sigma I - \epsilon E$
-      is singular for some $\|E\|_2\leq 1$}\right\}
-\end{equation*}
-which equals $\Lambda_\epsilon$.  Whether or not $B$ is singular,
-$\Lambda_\epsilon$ is the set of $\sigma\in \C$ for which $\sigma$ can
-be made an eigenvalue of $(A, B(I+E))$ by choosing some $E$ with
-$\|E\|_2\leq \epsilon$.  Define
+nonsingular, then $\Lambda_\epsilon$ is the $\epsilon$-pseudospectrum
+of $B^{-1} A$.  We are interested primarily in nonzero shifts, in
+which case $\Lambda_\epsilon$ has a natural interpretation in terms of
+generalized eigenvalues even when $B$ is singular.  For
+$\sigma \neq 0$ we have $\sigma\in\Lambda_\epsilon$ if and only if
+there exists $E$ with $\|E\|_2 \leq \epsilon/\sigma$ such that
+$\sigma$ is a generalized eigenvalue of $(A, B(I-E))$.
+
+Define
 \begin{equation}
   \label{eq:delta_def}
   \delta(\sigma) = \inf \{ \epsilon :
   \mbox{$\epsilon \geq 0$ and $\sigma \in \Lambda_\epsilon$}\}
 \end{equation}
-The set over which we take the infimum is closed and bounded from
-below so that the infimum is achieved and there exists $E$ with
-$\|E\|_2\leq \delta(\sigma)$ for which $\sigma$ is an eigenvalue of
-$(A, B(I+E))$.  The quantity $\delta(\sigma)$ can be viewed as a
-measure of the distance of $\sigma$ from a generalized eigenvalue of
-$(A,B)$ in a pseudospectral sense in which we are concerned with the
-relative change to $B$ needed to make $\sigma$ a generalized
-eigenvalue instead of the absolute distance of $\sigma$ from the
-nearest generalized eigenvalue $\lambda$ of $(A,B)$.  We refer to
-$\delta(\sigma)$ as the pseudospectral distance of $\sigma$ from a
-generalized eigenvalue of $(A,B)$.
+The infimum is achieved and for $\sigma \neq 0$, there exists $E$ with
+$\|E\|_2= \delta(\sigma)/\sigma$ for which $\sigma$ is an eigenvalue
+of $(A, B(I-E))$.  The quantity $\delta(\sigma)/\sigma$ can be viewed
+as a measure of the distance of $\sigma$ from a generalized eigenvalue
+of $(A,B)$ in a pseudospectral sense in which we are concerned with
+the relative change to $B$ needed to make $\sigma$ a generalized
+eigenvalue.  We refer to $\delta(\sigma)$ as the pseudospectral
+distance and $\delta(\sigma)/\sigma$ as the relative pseudospectral
+distance of $\sigma$ from a generalized eigenvalue of $(A,B)$.
 
 \begin{lemma}
   \label{lm:X_norm_bound}
-  If $A-\sigma B$ is nonsingular, $\sigma \neq 0$, $B\neq 0$, $X$ is
-  defined as in \eqref{eq:X_def}, and $\delta(\sigma)$ is as in
-  \eqref{eq:delta_def}, then
+  With $\delta(\sigma)$ defined as in \eqref{eq:delta_def}, we have
   \begin{equation*}
      \delta(\sigma) 
-     = \frac{1}{\|\sigma X\|_2}
+     = \frac{1}{\|(A-\sigma B)^{-1} B\|_2}
   \end{equation*}
+  where by convention we take $\|(A-\sigma B)^{-1} B\|_2=\infty$ and $\delta(\sigma)=0$
+  if $A-\sigma B$ is singular.
 \end{lemma}
 \begin{proof}
-  Consider the generalized singular value decomposition
+  If $A-\sigma B$ is singular, it is clear from \eqref{eq:pseudo_def}
+  and \eqref{eq:delta_def} that $\delta(\sigma)=0$.  If $A-\sigma B$
+  is nonsingular we consider the generalized singular value
+  decomposition
   \begin{equation*}
     A - \sigma B = S I U^\H,\eqand
-    \sigma B = S D V^\H
+    B = S D V^\H
   \end{equation*}
   where $S=(A-\sigma B)U$ is invertible,
-  $(A-\sigma B)^{-1}\sigma B = U D V^\H$, $U$ and $V$ are unitary, and
+  $(A-\sigma B)^{-1} B = U D V^\H$, $U$ and $V$ are unitary, and
   $D = \diag(d_1, \ldots, d_n)$ with $d_1 > 0$ and $d_k\geq 0$
-  nonincreasing for $k=1,2,\ldots, n$.  Suppose that
-  $A-\sigma B(I+ E)$.  Clearly
-  $A-\sigma B (I+E) = S (I - D V^\H E U) U^\H$ is
+  nonincreasing for $k=1,2,\ldots, n$.   Clearly
+  $A-\sigma B - BE = S (I - D V^\H E U) U^\H$ is
   singular if and only if $(I - D V^\H E U)$ is singular which implies
   that $\|E\|_2 \|D\|_2 \geq 1$ and
   \begin{equation*}
     \delta(\sigma)
     \geq \frac{1}{d_1} =
-    \frac{1}{\|(A-\sigma B)^{-1}\sigma B\|_2}.
+    \frac{1}{\|(A-\sigma B)^{-1}B\|_2}.
   \end{equation*}
   Let  
   \begin{equation*}
@@ -273,23 +271,32 @@ generalized eigenvalue of $(A,B)$.
   \end{equation*}
   Then
   \begin{equation*}
-    A-\sigma B (I+\hat{E}) = S (I-\vec{e}_1 \vec{e}_1^\H) U^\H
+    A-\sigma B - B \hat{E} = S (I-\vec{e}_1 \vec{e}_1^\H) U^\H
   \end{equation*}
   is singular so that
   \begin{equation*}
     \delta(\sigma)
     \leq \|\hat{E}\|_2 
-    = \frac{1}{d_1} = \frac{1}{\|(A-\sigma B)^{-1} \sigma B\|_2}.
+    = \frac{1}{d_1} = \frac{1}{\|(A-\sigma B)^{-1} B\|_2}.
   \end{equation*}
 \end{proof}
 
-If $B=I$ then Lemma~\ref{lm:X_norm_bound} reduces to
+If $B$ is nonsingular then Lemma~\ref{lm:X_norm_bound} reduces to
 \begin{equation*}
-  \delta(\sigma) = 
+  \delta(\sigma) = \frac{1}{\|(B^{-1}A - \sigma I)^{-1}\|_2}.
 \end{equation*}
-
+The fact that $\sigma$ is in the $\epsilon$-pseudospectrum of
+$B^{-1}A$ if and only if
+$\|(B^{-1}A - \sigma I)^{-1}\|_2\geq 1/\epsilon$ is standard.  The
+lemma simply reformulates this result to avoid assuming invertibility
+of $B$.
 
 We define
+\begin{equation}
+  \label{eq:Xdef}
+  X = (A-\sigma B)^{-1} B,
+\end{equation}
+
 \begin{equation}
   \label{eq:eta_def}
   \eta = \frac{\|A-\sigma B\|_2}{\|B\|_2},
@@ -304,19 +311,53 @@ and
   Suppose that $\sigma\neq 0$ and $\sigma \notin \Lambda_0$.  Then
   \begin{equation*}
     \eta \|X\|_2 \leq \left(1 + \frac{1}{|\sigma_0|}\right)
-    \frac{1}{\delta(\sigma)}.
+    \frac{1}{\delta(\sigma)/\sigma}.
   \end{equation*}
 \end{lemma}
 \begin{proof}
-  We have
+  From $\sigma \notin \Lambda_0$ we have $\delta(\sigma)\neq 0$ so that
   \begin{multline*}
     \eta \|X\|_2
-    = \frac{\|A-\sigma B\|_2}{\|B\|_2} \frac{1}{|\sigma| \delta(\sigma)}
-    \leq \frac{\|A\|_2+|\sigma| \|B\|_2}{|\sigma|\|B\|_2} \frac{1}{\delta(\sigma)}
-    = \frac{\|A\|_2+|\sigma_0| \|A\|_2}{|\sigma_0|\|A\|_2} \frac{1}{\delta(\sigma)}.
+    = \frac{\|A-\sigma B\|_2}{|\sigma| \|B\|_2} \frac{|\sigma|}{\delta(\sigma)}
+    \leq \frac{\|A\|_2+|\sigma| \|B\|_2}{|\sigma|\|B\|_2} \frac{|\sigma|}{\delta(\sigma)}
+    = \frac{\|A\|_2+|\sigma_0| \|A\|_2}{|\sigma_0|\|A\|_2} \frac{|\sigma|}{\delta(\sigma)}.
   \end{multline*}
 \end{proof}
 
+Suppose that $\sigma \notin \Lambda_0$ and that we have a Schur
+decomposition $X = (A-\sigma B)^{-1} B = ZTZ^\H$.  We then have
+\begin{equation*}
+  (A -\sigma B) Z T = B Z,\qquad\mbox{or}\qquad
+  A Z T = B Z (I +\sigma T).
+\end{equation*}
+If we compute a $QR$ factorization $(A -\sigma B)Z = QT_1$, then $T_1$
+is nonsingular and $Q^\H (A-\sigma B) Z = T_1$ so that
+$Q^\H BZ = T_1 T$.  This leads to a generalized Schur decomposition
+\begin{equation*}
+  Q^\H A Z = T_1(I+\sigma T),\eqand Q^\H BZ = T_1 T.
+\end{equation*}
+Since $T_1$ is nonsingular, the generalized eigenvalues of $(A,B)$ are
+the same as those of $(I+\sigma T, T)$.  If the diagonal elements of
+$T$ are $\theta_i$ for $i=1,\ldots n$, then the eigenvalues of $(A,B)$
+are $(1+\sigma\theta_i, \theta_i)\neq (0,0)$ or
+$\lambda_i = (1+\sigma \theta_i)/\theta_i$ for finite eigenvalues.
+The first $k$ columns of $Z$ give an orthonormal basis for a deflating
+subspace of $(A,B)$.  Eigenvectors can then be computed in the same
+way as with any other generalized Schur decomposition.  If $\vec{u}_i$
+is an eigenvector for $(I+\sigma T, T)$ corresponding to eigenvalue
+$(1+\sigma\theta_i, \theta_i)$, then
+\begin{equation*}
+  \theta_i A Z \vec{u}_i 
+  = \theta_i QT_1(I+\sigma T) \vec{u}_i
+  = (1+\sigma \theta_i) Q T_1 T \vec{u}_i
+  = (1+\sigma \theta_i) B Z \vec{u}_i
+\end{equation*}
+so that $\vec{v}_i = Z \vec{u}_i$ is an eigenvector for $(A,B)$.
+
+The following shows that under reasonable assumptions on the numerical
+errors associated with the computation of $X$ and the Schur
+decomposition of $X$, this algorithm achieves small backward errors
+when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
 \begin{theorem}
   \label{th:deflating_subspaces}
   Suppose that $A-\sigma B$ is nonsingular, and that there exist

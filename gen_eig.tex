@@ -5,6 +5,8 @@
 \usepackage{amsthm}
 \usepackage{amsfonts}\usepackage{bm}
 \usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage[noEnd=false,indLines=false]{algpseudocodex}
 \usepackage{colortbl}\usepackage{multirow}\usepackage{url}
 \usepackage{placeins}
 \usepackage{hhline}
@@ -197,52 +199,82 @@ $B^{-1}A$ when $B$ is invertible.
 Let
 \begin{equation}
   \label{eq:S_def}
-  \mathcal{S}_\sigma = 
+  \mathcal{S}(\sigma) =
+  \mathcal{S}(A,B,\sigma) = 
   \left\{ E : \mbox{$A - \sigma B - B E$ is singular} \right\}.
 \end{equation}
 For $\epsilon \geq 0$ define
 \begin{equation}
   \label{eq:pseudo_def}
-  \Lambda_\epsilon =
+  \Lambda(\epsilon) = \Lambda(A, B, \epsilon) =
   \left\{ \sigma \in \C: \mbox{there exists $E\in \mathcal{S}_\sigma$
       with $\|E\|_2\leq \epsilon$}
   \right\}.
 \end{equation}
-Clearly, $\Lambda_0$ is the set of generalized eigenvalues of $(A,B)$,
-possibly excluding $\lambda = \infty$ if $B$ is singular.  If $B$ is
-nonsingular, then $\Lambda_\epsilon$ is the $\epsilon$-pseudospectrum
-of $B^{-1} A$.  We are interested primarily in nonzero shifts, in
-which case $\Lambda_\epsilon$ has a natural interpretation in terms of
-generalized eigenvalues even when $B$ is singular.  For
-$\sigma \neq 0$ we have $\sigma\in\Lambda_\epsilon$ if and only if
-there exists $E$ with $\|E\|_2 \leq \epsilon/\sigma$ such that
-$\sigma$ is a generalized eigenvalue of $(A, B(I-E))$.
+Clearly, $\Lambda(0)$ is the set of finite generalized eigenvalues of
+$(A,B)$.  If $B$ is nonsingular, then $\Lambda(\epsilon)$ is the
+$\epsilon$-pseudospectrum of $B^{-1} A$.  We are interested primarily
+in a nonzero shift, in which case $\Lambda(\epsilon)$ has a natural
+interpretation in terms of generalized eigenvalues even when $B$ is
+singular.  For $\sigma \neq 0$ we have $\sigma\in\Lambda(\epsilon)$ if
+and only if there exists $E$ with $\|E\|_2 \leq \epsilon/\sigma$ such
+that $\sigma$ is a generalized eigenvalue of $(A, B(I-E))$.
 
 Define
 \begin{equation}
   \label{eq:delta_def}
-  \delta(\sigma) = \inf \{ \epsilon :
+  \delta(\sigma) = \delta(A, B, \sigma) = \inf \{ \epsilon :
   \mbox{$\epsilon \geq 0$ and $\sigma \in \Lambda_\epsilon$}\}
 \end{equation}
-The infimum is achieved and for $\sigma \neq 0$, there exists $E$ with
-$\|E\|_2= \delta(\sigma)/\sigma$ for which $\sigma$ is an eigenvalue
-of $(A, B(I-E))$.  The quantity $\delta(\sigma)/\sigma$ can be viewed
-as a measure of the distance of $\sigma$ from a generalized eigenvalue
-of $(A,B)$ in a pseudospectral sense in which we are concerned with
-the relative change to $B$ needed to make $\sigma$ a generalized
-eigenvalue.  We refer to $\delta(\sigma)$ as the pseudospectral
-distance and $\delta(\sigma)/\sigma$ as the relative pseudospectral
-distance of $\sigma$ from a generalized eigenvalue of $(A,B)$.
+The infimum is achieved and for some $\epsilon_0 =\delta(\sigma)$ for
+which $\sigma \in \Lambda_{\epsilon_0}$ and
+$\sigma \notin \Lambda_{\epsilon}$ for $\epsilon < \epsilon_0$.  Thus,
+if $B$ is invertible, then there exists $E$ with
+$\|E\|_2 = \delta(\sigma)$ that makes $\sigma$ an eigenvalue of
+$B^{-1}A - E$ and this is not achieved for any $E$ of smaller norm.
+Thus the quantity $\delta(\sigma)$ can be loosely viewed a distance of
+the set of eigenvalues of $B^{-1}A$ from $\sigma$ in a pseudospectral
+sense in which we are concerned with the absolute magnitude of
+$\|E\|_2$ required to make $\sigma$ an eigenvalue of $B^{-1}A - E$.
 
+Without assuming $B$ is invertible, if $\sigma \neq 0$, we can say
+that there exists $E$ with $\|E\|_2= \delta(\sigma)/\sigma$ that makes
+$\sigma$ a generalized eigenvalue of $(A, B(I-E))$ and this is also
+not achieved for any $E$ of smaller norm.  We can view
+$\delta(\sigma)/\sigma$ as a relative distance of the set of
+generalized eigenvalues from $\sigma$ in a pseudospectral sense in
+which we are concerned with the relative change to $B$ needed to make
+$\sigma$ a generalized eigenvalue.  We refer to $\delta(\sigma)$ as
+the pseudospectral distance and $\delta(\sigma)/\sigma$ as the
+relative pseudospectral distance of $\sigma$ from a generalized
+eigenvalue of $(A,B)$.  We have emphasized both absolute and relative
+measures because they give slightly different perspectives on
+magnitudes that we bound below and will later use in an error
+analysis.
+
+If $B$ is nonsingular and $\sigma$ is not an eigenvalue of $B^{-1}A$,
+then it is well known that $\sigma\notin \Lambda_0$ is in the
+$\epsilon$-pseudospectrum of $B^{-1}A$ if and only if
+$\|(B^{-1}A - \sigma I)^{-1}\|_2\geq 1/\epsilon$.  This is equivalent
+to
+\begin{equation*}
+  \delta(\sigma) = \frac{1}{\|(B^{-1}A - \sigma I)^{-1}\|_2}.
+\end{equation*}
+The following lemma reformulates this result to avoid assuming
+invertibility of $B$.
 \begin{lemma}
   \label{lm:X_norm_bound}
   With $\delta(\sigma)$ defined as in \eqref{eq:delta_def}, we have
   \begin{equation*}
      \delta(\sigma) 
-     = \frac{1}{\|(A-\sigma B)^{-1} B\|_2}
+     = 
+     \left\{
+       \begin{array}{ll}
+         \frac{1}{\|(A-\sigma B)^{-1} B\|_2}, & \sigma \notin \Lambda_0 \\
+         0, & \mbox{otherwise} \\
+       \end{array}
+     \right..
   \end{equation*}
-  where by convention we take $\|(A-\sigma B)^{-1} B\|_2=\infty$ and $\delta(\sigma)=0$
-  if $A-\sigma B$ is singular.
 \end{lemma}
 \begin{proof}
   If $A-\sigma B$ is singular, it is clear from \eqref{eq:pseudo_def}
@@ -281,56 +313,83 @@ distance of $\sigma$ from a generalized eigenvalue of $(A,B)$.
   \end{equation*}
 \end{proof}
 
-If $B$ is nonsingular then Lemma~\ref{lm:X_norm_bound} reduces to
-\begin{equation*}
-  \delta(\sigma) = \frac{1}{\|(B^{-1}A - \sigma I)^{-1}\|_2}.
-\end{equation*}
-The fact that $\sigma$ is in the $\epsilon$-pseudospectrum of
-$B^{-1}A$ if and only if
-$\|(B^{-1}A - \sigma I)^{-1}\|_2\geq 1/\epsilon$ is standard.  The
-lemma simply reformulates this result to avoid assuming invertibility
-of $B$.
 
 We define
 \begin{equation}
   \label{eq:Xdef}
-  X = (A-\sigma B)^{-1} B,
+  X \coloneqq (A-\sigma B)^{-1} B,
 \end{equation}
 
 \begin{equation}
   \label{eq:eta_def}
-  \eta = \frac{\|A-\sigma B\|_2}{\|B\|_2},
+  \eta \coloneqq \frac{\|A-\sigma B\|_2}{\|B\|_2},
+\end{equation}
+\begin{equation}
+  \label{eq:sigma0_def}
+  \sigma_0 \coloneqq \sigma \frac{\|B\|_2}{\|A\|_2},
 \end{equation}
 and
 \begin{equation}
-  \label{eq:sigma0_def}
-  \sigma_0 = \sigma \frac{\|B\|_2}{\|A\|_2}.
+  \label{eq:gamma_def}
+  \gamma \coloneqq \frac{\|A\|_2}{\|A-\sigma B\|_2}.
 \end{equation}
+We are interested in results that do not depend on the scaling of $A$
+or $B$.  To this end, we also define a scaled version
+$\delta_0(\sigma_0)$ of $\delta(\sigma)$.  It is easily seen that
+\begin{equation*}
+  \delta_0(\sigma_0) \coloneqq \delta\left(\frac{A}{\|A\|_2}, \frac{B}{\|B\|_2}, \sigma_0 \right) =
+  \frac{\|B\|_2}{\|A\|_2} \delta(A, B, \sigma)=\frac{\|B\|_2}{\|A\|_2} \delta(\sigma).
+\end{equation*}
+
+In considering the stability of using the eigenvector decomposition of $X$
+to compute generalized eigenvalues of $(A,B)$, we will be particularly concerned with
+the quantity $\eta \|X\|_2$, which is easily seen to satisfy
+\begin{equation*}
+  1 \leq \eta \|X\|_2 \leq \kappa_2(A-\sigma B).
+\end{equation*}
+The upper bound might give the impression that ill conditioning of
+$A-\sigma B$ could lead to large $\eta \|X\|_2$.  While this can
+happen, the following lemma shows that it does not happen if
+$\sigma$ is not close to a generalized eigenvalue in a quantifiable pseudospectral
+sense.
 \begin{lemma}
   \label{lm:eta_X_bound}
-  Suppose that $\sigma\neq 0$ and $\sigma \notin \Lambda_0$.  Then
-  \begin{equation*}
-    \eta \|X\|_2 \leq \left(1 + \frac{1}{|\sigma_0|}\right)
-    \frac{1}{\delta(\sigma)/\sigma}.
-  \end{equation*}
+  If $\sigma \notin \Lambda_0$, then
+  \begin{align*}
+    \eta \|X\|_2     
+    & \leq (1+|\sigma_0|) \frac{1}{\delta_0(\sigma_0)} \\
+    & = \left(1 + \frac{1}{|\sigma_0|}\right)
+      \frac{1}{\delta_0(\sigma_0)/|\sigma_0|},
+  \end{align*}
+  where the equality in the second line holds if $\sigma \neq 0$.
 \end{lemma}
 \begin{proof}
   From $\sigma \notin \Lambda_0$ we have $\delta(\sigma)\neq 0$ so that
-  \begin{multline*}
+  \begin{equation*}
     \eta \|X\|_2
-    = \frac{\|A-\sigma B\|_2}{|\sigma| \|B\|_2} \frac{|\sigma|}{\delta(\sigma)}
-    \leq \frac{\|A\|_2+|\sigma| \|B\|_2}{|\sigma|\|B\|_2} \frac{|\sigma|}{\delta(\sigma)}
-    = \frac{\|A\|_2+|\sigma_0| \|A\|_2}{|\sigma_0|\|A\|_2} \frac{|\sigma|}{\delta(\sigma)}.
-  \end{multline*}
+    \leq \frac{\|A\|_2 + |\sigma| \|B\|_2}{\|B\|_2} \frac{1}{\delta(\sigma)}
+    = (1 + |\sigma_0|) \frac{\|A\|_2}{\|B\|_2} \frac{1}{\delta(\sigma)}.
+  \end{equation*}
+  The second line is immediate from the first.
 \end{proof}
 
-Suppose that $\sigma \notin \Lambda_0$ and that we have a Schur
+The lemma gives two versions of the same upper bound.  The second
+suggests if $|\sigma_0|$ is not small, then the size of $\eta \|X\|_2$
+is determined by the relative pseudospectral distance of the set of
+generalized eigenvalues from $\sigma$.  If $|\sigma_0|$ is not large
+and the scaled pseudospectral distance $\delta_0(\sigma_0)$
+is not small, then we also expect $\eta \|X\|_2$ not to be large.  The
+scaling of $\delta(\sigma)$ is the same as is applied to give the
+scaled shift $\sigma_0$.  Both suggest that to have a useful bound on
+$\eta \|X\|_2$, we wish to avoid small $\delta_0(\sigma_0)$.
+
+Suppose that $\sigma \notin \Lambda(0)$ and that we have a Schur
 decomposition $X = (A-\sigma B)^{-1} B = ZTZ^\H$.  We then have
 \begin{equation*}
   (A -\sigma B) Z T = B Z,\qquad\mbox{or}\qquad
   A Z T = B Z (I +\sigma T).
 \end{equation*}
-If we compute a $QR$ factorization $(A -\sigma B)Z = QT_1$, then $T_1$
+If wec ompute a $QR$ factorization $(A -\sigma B)Z = QT_1$, then $T_1$
 is nonsingular and $Q^\H (A-\sigma B) Z = T_1$ so that
 $Q^\H BZ = T_1 T$.  This leads to a generalized Schur decomposition
 \begin{equation*}
@@ -339,12 +398,13 @@ $Q^\H BZ = T_1 T$.  This leads to a generalized Schur decomposition
 Since $T_1$ is nonsingular, the generalized eigenvalues of $(A,B)$ are
 the same as those of $(I+\sigma T, T)$.  If the diagonal elements of
 $T$ are $\theta_i$ for $i=1,\ldots n$, then the eigenvalues of $(A,B)$
-are $(1+\sigma\theta_i, \theta_i)\neq (0,0)$ or
-$\lambda_i = (1+\sigma \theta_i)/\theta_i$ for finite eigenvalues.
-The first $k$ columns of $Z$ give an orthonormal basis for a deflating
-subspace of $(A,B)$.  Eigenvectors can then be computed in the same
-way as with any other generalized Schur decomposition.  If $\vec{u}_i$
-is an eigenvector for $(I+\sigma T, T)$ corresponding to eigenvalue
+are $(1+\sigma\theta_i, \theta_i)\neq (0,0)$.  The finite eigenvalues
+are $\lambda_i = (1+\sigma \theta_i)/\theta_i$ for each
+$\theta_i\neq 0$.  The first $k$ columns of $Z$ give an orthonormal
+basis for a deflating subspace of $(A,B)$.  Eigenvectors can then be
+computed in a manner that is similar to any other generalized Schur
+decomposition.  Specifically, if $\vec{u}_i$ is an eigenvector for
+$(I+\sigma T, T)$ corresponding to eigenvalue
 $(1+\sigma\theta_i, \theta_i)$, then
 \begin{equation*}
   \theta_i A Z \vec{u}_i 

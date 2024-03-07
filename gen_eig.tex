@@ -37,6 +37,7 @@
 \def\th#1{\tilde{\hat{#1}}}
 \def\e#1{{\times}10^{#1}}
 \def\diag{\mbox{diag}}
+\def\mcal{\mathcal}
 \newcommand{\minprobc}[3]{
   \begin{array}{ll}
     \mbox{min}_{#1} & #2 \\
@@ -52,7 +53,7 @@
 \let\oldenumerate=\enumerate
 \renewenvironment{enumerate}{\oldenumerate\parindent=1.5em}{\endlist}
 
-\bibliographystyle{siam} \title{On the Inversion in the Solution of
+\bibliographystyle{siam} \title{On Inversion and the Explicit Solution
   the Generalized Eigenvalue Problem} \author{Michael
   Stewart\thanks{Department of Mathematics and Statistics, Georgia
     State University, Atlanta GA 30303, {\tt mastewart@gsu.edu}}}
@@ -181,79 +182,76 @@ orthogonalization step fails to improve residuals.  Nevertheless, when
 compared to the straightforward approach of forming $B^{-1}A$, the
 method often works well to improve the stability of the method.
 
-\section{Numerical Stability}
-\label{sec:numerical-stability}
+\section{Choosing a Shift}
+\label{sec:shift}
 
-In this section, we ultimately prove residual bounds for computed
-generalized eigenvalues and eigenvectors determined from eigenvalues
-and eigenvectors of $(A-\sigma B)^{-1}B$.  There are some technical
-concerns related to scaling and the magnitude of the shift $\sigma$,
-but a rough summary of the results is that we can expect to have
-useful error bounds when $\sigma$ is not in the
-$\epsilon$-pseudospectrum of $B^{-1}A$ for small $\epsilon$.  However,
-we do not want to assume that $B$ is invertible, so we make a small
-adaptation of standard results on pseudospectra by considering a set
-that suits our purposes and is equivalent to the pseudospectrum of
-$B^{-1}A$ when $B$ is invertible.
+In this section, we consider the choice of shift.  There are some
+complications related to scaling and the magnitude of the shift
+$\sigma$, but a rough summary is that we can expect to have useful
+error bounds when $\sigma$ is not in the $\epsilon$-pseudospectrum of
+$B^{-1}A$ for small $\epsilon$.  However, we do not want to assume
+that $B$ is invertible, so we adapt some standard results on
+pseudospectra by considering a set that suits our purposes and is
+equivalent to the pseudospectrum of $B^{-1}A$ when $B$ is invertible.
 
-Let
+
+For $B\neq 0$, let
 \begin{equation}
   \label{eq:S_def}
   \mathcal{S}(\sigma) =
   \mathcal{S}(A,B,\sigma) = 
-  \left\{ E : \mbox{$A - \sigma B - B E$ is singular} \right\}.
+  \left\{ E \mid \mbox{$A - \sigma B - B E$ is singular} \right\}.
 \end{equation}
-For $\epsilon \geq 0$ define
+With the assumption that $B\neq 0$, the set $\mcal{S}(\sigma)$ is
+nonempty.  This can be shown by noting that if $A-\sigma B$ is
+singular, then $E=0$ is in $\mcal{S}(\sigma)$.  If $A-\sigma B$ is
+nonsingular and $B\vec{y}\neq \vec{0}$ for $\|\vec{y}\|_2 = 1$, we
+have $(A-\sigma B) \vec{x} = B\vec{y}$ for some $\vec{x}\neq \vec{0}$.
+The matrix $E = \vec{y}\vec{x}^\H/\|\vec{x}\|_2^2$ is then in
+$\mcal{S}(\sigma)$.  The set is closed and contains a matrix $E$
+for which $\|E\|_2$ is a minimum.  We can therefore define
+\begin{equation}
+  \label{eq:delta_def}
+  \delta(\sigma) = \delta(A,B,\sigma) =
+  \min_{E\in \mcal{S}(\sigma)} \|E\|_2
+\end{equation}
+knowing that there is some $E_0\in \mcal{S}(\sigma)$ for which
+$\|E_0\|_2 = \delta(\sigma)$.  
+
+If $B$ is nonsingular, then $E\in \mcal{S}(\sigma)$ if and only if
+$B^{-1}A - \sigma I -E$ is singular.  If $B^{-1}A$ is normal then it
+is easily seen that
+\begin{equation}
+  \label{eq:normal_delta}
+  \delta(\sigma) = \frac{1}{\min_i |\lambda_i - \sigma|}
+\end{equation}
+where the minimum is taken over all generalized eigenvalues of $(A,B)$.
+
+For $\epsilon \geq 0$ and nonsingular $B$, we can define the pseudospectrum of $B^{-1}A$ as
 \begin{equation}
   \label{eq:pseudo_def}
   \Lambda(\epsilon) = \Lambda(A, B, \epsilon) =
-  \left\{ \sigma \in \C: \mbox{there exists $E\in \mathcal{S}_\sigma$
+  \left\{ \sigma \in \C \mid \mbox{there exists $E\in \mathcal{S}_\sigma$
       with $\|E\|_2\leq \epsilon$}
   \right\}.
 \end{equation}
-Clearly, $\Lambda(0)$ is the set of finite generalized eigenvalues of
-$(A,B)$.  If $B$ is nonsingular, then $\Lambda(\epsilon)$ is the
-$\epsilon$-pseudospectrum of $B^{-1} A$.  We are interested primarily
-in a nonzero shift, in which case $\Lambda(\epsilon)$ has a natural
-interpretation in terms of generalized eigenvalues even when $B$ is
-singular.  For $\sigma \neq 0$ we have $\sigma\in\Lambda(\epsilon)$ if
-and only if there exists $E$ with $\|E\|_2 \leq \epsilon/\sigma$ such
-that $\sigma$ is a generalized eigenvalue of $(A, B(I-E))$.
+This definition is formulated so that defines $\Lambda(\epsilon)$ even
+when $B$ is singular.  The set of finite generalized eigenvalues of
+$(A,B)$ is given by $\Lambda(0)$ and $\Lambda(\epsilon)$ for
+$\epsilon \geq 0$ contains the finite generalized eigenvalues of $(A,B)$.  We
+also have $\sigma \in \Lambda(\epsilon)$ if and only if
+$\delta(\sigma)\leq \epsilon$.
 
-Define
-\begin{equation}
-  \label{eq:delta_def}
-  \delta(\sigma) = \delta(A, B, \sigma) = \inf \{ \epsilon :
-  \mbox{$\epsilon \geq 0$ and $\sigma \in \Lambda_\epsilon$}\}
-\end{equation}
-The infimum is achieved and for some $\epsilon_0 =\delta(\sigma)$ for
-which $\sigma \in \Lambda_{\epsilon_0}$ and
-$\sigma \notin \Lambda_{\epsilon}$ for $\epsilon < \epsilon_0$.  Thus,
-if $B$ is invertible, then there exists $E$ with
-$\|E\|_2 = \delta(\sigma)$ that makes $\sigma$ an eigenvalue of
-$B^{-1}A - E$ and this is not achieved for any $E$ of smaller norm.
-Thus the quantity $\delta(\sigma)$ can be loosely viewed a distance of
-the set of eigenvalues of $B^{-1}A$ from $\sigma$ in a pseudospectral
-sense in which we are concerned with the absolute magnitude of
-$\|E\|_2$ required to make $\sigma$ an eigenvalue of $B^{-1}A - E$.
-
-Without assuming $B$ is invertible, if $\sigma \neq 0$, we can say
-that there exists $E$ with $\|E\|_2= \delta(\sigma)/\sigma$ that makes
-$\sigma$ a generalized eigenvalue of $(A, B(I-E))$ and this is also
-not achieved for any $E$ of smaller norm.  We can view
-$\delta(\sigma)/\sigma$ as a relative distance of the set of
-generalized eigenvalues from $\sigma$ in a pseudospectral sense in
-which we are concerned with the relative change to $B$ needed to make
-$\sigma$ a generalized eigenvalue.  We refer to $\delta(\sigma)$ as
-the pseudospectral distance and $\delta(\sigma)/\sigma$ as the
-relative pseudospectral distance of $\sigma$ from a generalized
-eigenvalue of $(A,B)$.  We have emphasized both absolute and relative
-measures because they give slightly different perspectives on
-magnitudes that we bound below and will later use in an error
-analysis.
+We refer to $\delta(\sigma)$ as the pseudospectral distance of
+$\sigma$ from a generalized eigenvalue of $(A,B)$.  It measures the
+smallest $\|E\|_2$ for which $\sigma$ is an eigenvalue of $(A-BE, B)$.
+This is equivalent to $\sigma$ being an eigenvalue of
+$(A, B(I-E/\sigma))$.  Thus $\delta(\sigma)/|\sigma|$ gives the
+smallest $\|E\|_2$ for which $\sigma$ is an eigenvalue of
+$(A, B(I-E))$.
 
 If $B$ is nonsingular and $\sigma$ is not an eigenvalue of $B^{-1}A$,
-then it is well known that $\sigma\notin \Lambda_0$ is in the
+then it is well known that $\sigma$ is in the
 $\epsilon$-pseudospectrum of $B^{-1}A$ if and only if
 $\|(B^{-1}A - \sigma I)^{-1}\|_2\geq 1/\epsilon$.  This is equivalent
 to
@@ -270,7 +268,7 @@ invertibility of $B$.
      = 
      \left\{
        \begin{array}{ll}
-         \frac{1}{\|(A-\sigma B)^{-1} B\|_2}, & \sigma \notin \Lambda_0 \\
+         \frac{1}{\|(A-\sigma B)^{-1} B\|_2}, & \sigma \notin \Lambda(0) \\
          0, & \mbox{otherwise} \\
        \end{array}
      \right..
@@ -313,29 +311,37 @@ invertibility of $B$.
   \end{equation*}
 \end{proof}
 
+If $(A-\sigma B)^{-1}B$ is normal then we have
+$(A-\sigma B)^{-1}B = Z \Theta Z^\H$ where $Z$ is unitary and $\Theta$
+is diagonal with $\theta_i = 1/(\lambda_i - \sigma)$ for
+$i=1,2,\ldots, n$ on its diagonal.  In this case we again have
+\eqref{eq:normal_delta}, but now assuming invertibility of
+$A-\sigma B$ instead of $B$.  Without an assumption of normality, we
+expect $\delta(\sigma)$ to be larger than the right-hand side of
+\eqref{eq:normal_delta}.
 
-We define
+Define
 \begin{equation}
   \label{eq:Xdef}
-  X \coloneqq (A-\sigma B)^{-1} B,
+  X = (A-\sigma B)^{-1} B,
 \end{equation}
 
 \begin{equation}
   \label{eq:eta_def}
-  \eta \coloneqq \frac{\|A-\sigma B\|_2}{\|B\|_2},
+  \eta = \frac{\|A-\sigma B\|_2}{\|B\|_2},
 \end{equation}
 \begin{equation}
   \label{eq:sigma0_def}
-  \sigma_0 \coloneqq \sigma \frac{\|B\|_2}{\|A\|_2},
+  \sigma_0 = \sigma \frac{\|B\|_2}{\|A\|_2},
 \end{equation}
 and
 \begin{equation}
   \label{eq:gamma_def}
-  \gamma \coloneqq \frac{\|A\|_2}{\|A-\sigma B\|_2}.
+  \gamma = \frac{\|A\|_2}{\|A-\sigma B\|_2}.
 \end{equation}
-We are interested in results that do not depend on the scaling of $A$
-or $B$.  To this end, we also define a scaled version
-$\delta_0(\sigma_0)$ of $\delta(\sigma)$.  It is easily seen that
+The quantities $\eta$ and $\sigma_0$ are defined with the goal of
+scaling our bounds so that they are independent of how $A$ and $B$ are
+scaled.  To this end, we also define
 \begin{equation*}
   \delta_0(\sigma_0) \coloneqq \delta\left(\frac{A}{\|A\|_2}, \frac{B}{\|B\|_2}, \sigma_0 \right) =
   \frac{\|B\|_2}{\|A\|_2} \delta(A, B, \sigma)=\frac{\|B\|_2}{\|A\|_2} \delta(\sigma).
@@ -348,48 +354,36 @@ the quantity $\eta \|X\|_2$, which is easily seen to satisfy
   1 \leq \eta \|X\|_2 \leq \kappa_2(A-\sigma B).
 \end{equation*}
 The upper bound might give the impression that ill conditioning of
-$A-\sigma B$ could lead to large $\eta \|X\|_2$.  While this can
-happen, the following lemma shows that it does not happen if
-$\sigma$ is not close to a generalized eigenvalue in a quantifiable pseudospectral
-sense.
+$A-\sigma B$ could lead to large $\eta \|X\|_2$.  While this can happen,
+a more useful bound is given in terms of $\delta(\sigma_0)$.
 \begin{lemma}
   \label{lm:eta_X_bound}
-  If $\sigma \notin \Lambda_0$, then
-  \begin{align*}
-    \eta \|X\|_2     
-    & \leq (1+|\sigma_0|) \frac{1}{\delta_0(\sigma_0)} \\
-    & = \left(1 + \frac{1}{|\sigma_0|}\right)
-      \frac{1}{\delta_0(\sigma_0)/|\sigma_0|},
-  \end{align*}
-  where the equality in the second line holds if $\sigma \neq 0$.
+  If $\sigma \notin \Lambda(0)$, then
+  \begin{equation*}
+    \eta \|X\|_2 \leq \frac{1}{\delta_0(\sigma_0)} + \frac{|\sigma_0|}{\delta_0(\sigma_0)}.
+  \end{equation*}
 \end{lemma}
 \begin{proof}
-  From $\sigma \notin \Lambda_0$ we have $\delta(\sigma)\neq 0$ so that
+  From $\sigma \notin \Lambda(0)$ we have $\delta(\sigma)\neq 0$ so that
   \begin{equation*}
     \eta \|X\|_2
     \leq \frac{\|A\|_2 + |\sigma| \|B\|_2}{\|B\|_2} \frac{1}{\delta(\sigma)}
     = (1 + |\sigma_0|) \frac{\|A\|_2}{\|B\|_2} \frac{1}{\delta(\sigma)}.
   \end{equation*}
-  The second line is immediate from the first.
 \end{proof}
 
-The lemma gives two versions of the same upper bound.  The second
-suggests if $|\sigma_0|$ is not small, then the size of $\eta \|X\|_2$
-is determined by the relative pseudospectral distance of the set of
-generalized eigenvalues from $\sigma$.  If $|\sigma_0|$ is not large
-and the scaled pseudospectral distance $\delta_0(\sigma_0)$
-is not small, then we also expect $\eta \|X\|_2$ not to be large.  The
-scaling of $\delta(\sigma)$ is the same as is applied to give the
-scaled shift $\sigma_0$.  Both suggest that to have a useful bound on
-$\eta \|X\|_2$, we wish to avoid small $\delta_0(\sigma_0)$.
+\section{Algorithm and Error Analysis}
+\label{sec:algor-error-analys}
 
-Suppose that $\sigma \notin \Lambda(0)$ and that we have a Schur
-decomposition $X = (A-\sigma B)^{-1} B = ZTZ^\H$.  We then have
+We now turn our attention to the computation of a generalized Schur
+decomposition of $(A,B)$ from a schur decomposition of
+$X = (A-\sigma B)^{-1} B$.  Suppose that $\sigma \notin \Lambda(0)$
+and that we have a Schur decomposition $X = ZTZ^\H$.  We then have
 \begin{equation*}
   (A -\sigma B) Z T = B Z,\qquad\mbox{or}\qquad
   A Z T = B Z (I +\sigma T).
 \end{equation*}
-If wec ompute a $QR$ factorization $(A -\sigma B)Z = QT_1$, then $T_1$
+If we compute a $QR$ factorization $(A -\sigma B)Z = QT_1$, then $T_1$
 is nonsingular and $Q^\H (A-\sigma B) Z = T_1$ so that
 $Q^\H BZ = T_1 T$.  This leads to a generalized Schur decomposition
 \begin{equation*}
@@ -401,36 +395,97 @@ $T$ are $\theta_i$ for $i=1,\ldots n$, then the eigenvalues of $(A,B)$
 are $(1+\sigma\theta_i, \theta_i)\neq (0,0)$.  The finite eigenvalues
 are $\lambda_i = (1+\sigma \theta_i)/\theta_i$ for each
 $\theta_i\neq 0$.  The first $k$ columns of $Z$ give an orthonormal
-basis for a deflating subspace of $(A,B)$.  Eigenvectors can then be
-computed in a manner that is similar to any other generalized Schur
-decomposition.  Specifically, if $\vec{u}_i$ is an eigenvector for
-$(I+\sigma T, T)$ corresponding to eigenvalue
-$(1+\sigma\theta_i, \theta_i)$, then
+basis for a deflating subspace of $(A,B)$.  This approach leads to
+Algorithm~\ref{alg:gen_schur}.
+
+If needed, eigenvectors can be computed in a manner that is similar to
+any other generalized Schur decomposition.  Specifically, if
+$\vec{u}_i$ is an eigenvector for $(I+\sigma T, T)$ corresponding to
+eigenvalue $(1+\sigma\theta_i, \theta_i)$, then
 \begin{equation*}
   \theta_i A Z \vec{u}_i 
   = \theta_i QT_1(I+\sigma T) \vec{u}_i
   = (1+\sigma \theta_i) Q T_1 T \vec{u}_i
   = (1+\sigma \theta_i) B Z \vec{u}_i
 \end{equation*}
-so that $\vec{v}_i = Z \vec{u}_i$ is an eigenvector for $(A,B)$.
+so that $\vec{v}_i = Z \vec{u}_i$ is an eigenvector for $(A,B)$.  
 
-The following shows that under reasonable assumptions on the numerical
-errors associated with the computation of $X$ and the Schur
-decomposition of $X$, this algorithm achieves small backward errors
-when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
+\begin{algorithm}
+\caption{Spectral Transformation for \eqref{eq:sym_gen_eig}}
+\label{alg:gen_schur}
+\begin{algorithmic}
+\Function{GenSchur}{$A, B, \sigma$}
+\State $\breve{A} \gets A - \sigma B$
+\State Solve: $\breve{A}X = B$
+\State Factor: $X = Z T Z^{\H}$
+\State $W \gets \breve{A}Z$
+\State Factor: $W = Q T_1$
+\State \Return $(T, T_1, Q, Z)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+The following lemma is useful in the derivation of backward error
+bounds for Algorithm~\ref{alg:gen_schur}.
+\begin{lemma}
+  \label{lm:pseudo_inv}
+  For a given shift $\sigma$ with $\sigma_0$ given by
+  \eqref{eq:sigma0_def} and matrix $T$, let
+  \begin{equation*}
+    C
+    =
+    \begin{bmatrix}
+      -\|A\|_2 T / \|B\|_2 \\ I + \sigma T
+    \end{bmatrix}.
+  \end{equation*}
+  Then
+  \begin{equation*}
+    \|C^{\dagger}\|_2\leq (1+|\sigma_0|)
+  \end{equation*}.
+\end{lemma}
+\begin{proof}
+  We seek a lower bound on the smallest singular value of $C$.  We
+  consider two cases.  Given a vector $\vec{x}$ with
+  $\|\vec{x}\|_2 = 1$, either
+  \begin{equation*}
+    \|T\vec{x}\|_2 \leq \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2},
+    \qquad\mbox{or}\qquad
+    \|T\vec{x}\|_2 > \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2}.
+  \end{equation*}
+  In the first case we have
+  \begin{multline*}
+    \|(I + \sigma T) \vec{x}\|_2
+    \geq \|\vec{x}\|_2 - |\sigma| \|T\vec{x}\|
+    \geq 1 - \frac{|\sigma| \|B\|_2}{(1+|\sigma_0|)\|A\|_2}\\
+    = 1 - \frac{|\sigma_0| \|A\|_2}{(1+|\sigma_0|)\|A\|_2}
+    = \frac{1}{1+|\sigma_0|}.
+  \end{multline*}
+  The second case immediately gives
+  \begin{equation*}
+    \frac{\|A\|_2\|T\vec{x}\|_2}{\|B\|_2}  > \frac{1}{1+|\sigma_0|}.
+  \end{equation*}
+  It follows that $\|C\vec{x}\| \geq 1/(1+|\sigma_0|)$ for arbitrary
+  $\vec{x}$ with $\|\vec{x}\|_2=1$ so that
+  $\sigma_n(C)\geq 1/(1+|\sigma_0|)$ and
+  $\|C^{\dagger}\|_2\leq (1+|\sigma_0|)$.
+\end{proof}
+
 \begin{theorem}
   \label{th:deflating_subspaces}
   Suppose that $A-\sigma B$ is nonsingular, and that there exist
-  $a_n\geq 0$ and $b_n\geq 0$ depending solely on $n$ for which the
-  computed $X$ satisfies
+  $a_n\geq 0$, $b_n\geq 0$, and $c_n$ depending solely on $n$ for which
+  \begin{equation*}
+    \|A-\sigma B - \breve{A}\|_2 \leq u a_n (\|A-\sigma B\|_2 + |\sigma| \|B\|_2),
+  \end{equation*}
   \begin{equation}
     \label{eq:Xerror}
-    \left\| (A-\sigma B) X - B \right\|_2 \leq u a_n \|A-\sigma B\|_2 \|X\|_2
+    \left\| \breve{A} X - B \right\|_2 
+    \leq u b_n \|\breve{A}\|_2 \|X\|_2,
   \end{equation}
-  and the computed Schur factor $T$ of $X$ is nonsingular and satisfies
+  and
   \begin{equation}
     \label{eq:schur_error}
-    \| X - \tilde{Z} T \tilde{Z}^\H \|_2 \leq u b_n \|X\|_2,
+    \| X - \tilde{Z} T \tilde{Z}^\H \|_2 \leq u c_n \|X\|_2,
   \end{equation}
   where $\tilde{Z}$ is exactly unitary.  Then there exist $E$ and $F$
   satisfying
@@ -443,32 +498,36 @@ when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
       \begin{bmatrix}
         \frac{E}{\|A\|_2} & \frac{F}{\|B\|_2}
       \end{bmatrix}
-    \right\|_2 \leq u (a_n + b_n)(1+|\sigma_0|) \eta \|X\|_2.
+    \right\|_2 \leq 
+    u (a_n(1+|\sigma_0|\gamma) + b_n + c_n)(1+|\sigma_0|) \eta\|X\|_2 +O(u^2)
   \end{equation*}
 \end{theorem}
 \begin{proof}
-  Define $G_0 = (A-\sigma B) X - B$ and $G_1 = X - \tilde{Z}T\tilde{Z}^\H$.  Then
-  \begin{equation*}
+  Define $G_0 = A-\sigma B - \breve{A}$, $G_1 = \breve{A} X - B$ and $G_2 = X - \tilde{Z}T\tilde{Z}^\H$.  Then
+  \begin{multline*}
     (A-\sigma B) \tilde{Z} T 
-    = (A-\sigma B) X \tilde{Z} - (A-\sigma B) G_1 \tilde{Z}
-    = B\tilde{Z} + G_0\tilde{Z} - (A-\sigma B) G_1 \tilde{Z}
-  \end{equation*}
+    = (\breve{A} + G_0) \tilde{Z}T
+    = (\breve{A} + G_0) (X - G_2)\tilde{Z} \\
+    = (B+G_1)\tilde{Z} + G_0 X\tilde{Z} - \breve{A}G_2 \tilde{Z} + O(u^2)
+  \end{multline*}
   so that
   \begin{equation*}
-    A \tilde{Z} T= B \tilde{Z} (I+\sigma T) + G_0 \tilde{Z} - (A-\sigma B)G_1 \tilde{Z}.
+    A \tilde{Z} T= B \tilde{Z} (I+\sigma T) + G_0 X \tilde{Z} + G_1 \tilde{Z} - \breve{A}G_2 \tilde{Z} + O(u^2).
   \end{equation*}
   Defining
   \begin{equation*}
-    G = G_0 \tilde{Z} - (A-\sigma B)G_1 \tilde{Z}
+    G = A \tilde{Z} T - B \tilde{Z} (I+\sigma T) = G_0 X \tilde{Z} + G_1 \tilde{Z} - \breve{A}G_2 \tilde{Z}+O(u^2)
   \end{equation*}
-  we have
-  \begin{equation*}
-    \|G\|_2
-    \leq u (a_n + b_n) \|A-\sigma B\|_2 \|X\|_2
-    = u (a_n + b_n) \eta \|X\|_2 \|B\|_2.
-  \end{equation*}
-  We have $(A+E)\tilde{Z} = (B+F)\tilde{Z}(I+\sigma T)$ if and only if
-  \begin{equation*}
+  and noting that $\sigma = \sigma_0 \gamma \eta$ and $\|\breve{A}\|_2 = \|A-\sigma B\|_2+ O(u)$, gives
+  \begin{align*}
+    \|G\|_2 & \leq u (a_n+b_n+c_n) \|A-\sigma B\|_2 \|X\|_2 + u a_n |\sigma| \|B\|_2 \|X\|_2 +O(u^2)\\
+            & \leq u(a_n + b_n+c_n) \eta \|X\|_2 \|B\|_2
+              + u a_n |\sigma_0| \gamma \eta \|X\|_2 \|B\|_2 +O(u^2)\\
+            & = u (a_n(1+|\sigma_0|\gamma) + b_n + c_n)\eta\|X\|_2 \|B\|_2 +O(u^2).
+  \end{align*}
+  We have $(A+E)\tilde{Z}T = (B+F)\tilde{Z}(I+\sigma T)$ if and only if
+  \begin{equation}
+    \label{eq:backward_error_relation}
     \|B\|_2 \begin{bmatrix}
       -\frac{E\tilde{Z}}{\|A\|_2} & \frac{F\tilde{Z}}{\|B\|_2}
     \end{bmatrix}
@@ -476,7 +535,7 @@ when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
       -\|A\|_2 T / \|B\|_2 \\ I + \sigma T
     \end{bmatrix}
     = G.
-  \end{equation*}
+  \end{equation}
   If we define
   \begin{equation*}
     C
@@ -485,76 +544,134 @@ when $|\sigma_0|$ is not large and $\eta \|X\|_2$ is not large.
       -\|A\|_2 T / \|B\|_2 \\ I + \sigma T
     \end{bmatrix}
   \end{equation*}
-  then using the fact that $T$ is nonsingular and $A \neq 0$ implies
-  that $C$ has linearly independent columns.  One choice for $E$ and
-  $F$ that satisfies the above relation is then given by
+  then one choice of $E$ and $F$ satisfying \eqref{eq:backward_error_relation} is given
+  by
   \begin{equation*}
     \begin{bmatrix}
       -\frac{E\tilde{Z}}{\|A\|_2} & \frac{F\tilde{Z}}{\|B\|_2}
     \end{bmatrix} = \frac{1}{\|B\|_2} G C^{\dagger}
   \end{equation*}
-  where $C^{\dagger}$ is the pseudoinverse of $C$.  Clearly $\sigma_n(C)\neq 0$ and
-  $\|C^\dagger\|_2 = 1/\sigma_n(C)$.  We consider two cases.  Given a
-  vector $\vec{x}$ with $\|\vec{x}\|_2 = 1$, either
+  so that Lemma~\ref{lm:pseudo_inv} gives
   \begin{equation*}
-    \|T\vec{x}\|_2 \leq \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2},
-    \qquad\mbox{or}\qquad
-    \|T\vec{x}\|_2 > \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2}.
-  \end{equation*}
-  In the first case we have
-  \begin{multline*}
-    \|(I + \sigma T) \vec{x}\|_2
-    \geq \|\vec{x}\|_2 - |\sigma| \|T\vec{x}\|
-    \geq 1 - \frac{|\sigma| \|B\|_2}{(1+|\sigma_0|)\|A\|_2}\\
-    = 1 - \frac{|\sigma_0| \|A\|_2}{(1+|\sigma_0|)\|A\|_2}
-    = \frac{1}{1+|\sigma_0|}.
-  \end{multline*}
-  The second case immediately gives
-  \begin{equation*}
-    \frac{\|A\|_2\|T\vec{x}\|_2}{\|B\|_2}  > \frac{1}{1+|\sigma_0|}.
-  \end{equation*}
-  It follows that $\|C\vec{x}\| \geq 1/(1+|\sigma_0|)$ so that $\|C^{\dagger}\|_2\leq (1+|\sigma_0|)$ and
-  \begin{equation*}
-    \begin{bmatrix}
-      \frac{E}{\|A\|_2} & \frac{F}{\|B\|_2}
-    \end{bmatrix}
-    \leq \frac{1+|\sigma_0|}{\|B\|_2} \|G\|_2
-    \leq u(a_n+b_n) (1+|\sigma_0|)\eta \|X\|_2.
-  \end{equation*}
-\end{proof}
-    \end{bmatrix} = \frac{1}{\|B\|_2} G C^{\dagger}
-  \end{equation*}
-  where $C^{\dagger}$ is the pseudoinverse of $C$.  Clearly $\sigma_n(C)\neq 0$ and
-  $\|C^\dagger\|_2 = 1/\sigma_n(C)$.  We consider two cases.  Given a
-  vector $\vec{x}$ with $\|\vec{x}\|_2 = 1$, either
-  \begin{equation*}
-    \|T\vec{x}\|_2 \leq \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2},
-    \qquad\mbox{or}\qquad
-    \|T\vec{x}\|_2 > \frac{\|B\|_2}{(1+|\sigma_0|)\|A\|_2}.
-  \end{equation*}
-  In the first case we have
-  \begin{multline*}
-    \|(I + \sigma T) \vec{x}\|_2
-    \geq \|\vec{x}\|_2 - |\sigma| \|T\vec{x}\|
-    \geq 1 - \frac{|\sigma| \|B\|_2}{(1+|\sigma_0|)\|A\|_2}\\
-    = 1 - \frac{|\sigma_0| \|A\|_2}{(1+|\sigma_0|)\|A\|_2}
-    = \frac{1}{1+|\sigma_0|}.
-  \end{multline*}
-  The second case immediately gives
-  \begin{equation*}
-    \frac{\|A\|_2\|T\vec{x}\|_2}{\|B\|_2}  > \frac{1}{1+|\sigma_0|}.
-  \end{equation*}
-  It follows that $\|C\vec{x}\| \geq 1/(1+|\sigma_0|)$ so that $\|C^{\dagger}\|_2\leq (1+|\sigma_0|)$ and
-  \begin{equation*}
-    \begin{bmatrix}
-      \frac{E}{\|A\|_2} & \frac{F}{\|B\|_2}
-    \end{bmatrix}
-    \leq \frac{1+|\sigma_0|}{\|B\|_2} \|G\|_2
-    \leq u(a_n+b_n) (1+|\sigma_0|)\eta \|X\|_2.
+    \left\| \frac{1}{\|B\|_2} G C^{\dagger}\right\|_2 \leq 
+    u (a_n(1+|\sigma_0|\gamma) + b_n + c_n)(1+|\sigma_0|) \eta\|X\|_2 +O(u^2).
   \end{equation*}
 \end{proof}
 
-
+\begin{theorem}
+  \label{th:generalized_schur}
+  Suppose that $A-\sigma B$ is nonsingular, and that there exist
+  $a_n$, $b_n$, $c_n$, $d_n$, $e_n$, $f_n$, and $g_n$ depending solely
+  on $n$ for which
+  \begin{equation}
+    \|\breve{A} - (A-\sigma B)\|_2 \leq u a_n (\|A-\sigma B\|_2 + |\sigma| \|B\|_2),
+  \end{equation}
+  \begin{equation}
+    \label{eq:Xerror}
+    \left\| \breve{A} X - B \right\|_2 
+    \leq u b_n \|\breve{A}\|_2\|X\|_2,
+  \end{equation}
+  \begin{equation}
+    \label{eq:schur_error}
+    \| X - \tilde{Z} T \tilde{Z}^\H \|_2 \leq u c_n \|X\|_2,\qquad
+    \|Z - \tilde{Z}\|_2 \leq u d_n,
+  \end{equation}
+  \begin{equation}
+    \label{eq:AZerror}
+    \|\breve{A} Z - W\|_2 \leq u e_n \|\breve{A}\|_2,
+  \end{equation}
+  \begin{equation}
+    \label{eq:QRerror}
+    \|\tilde{Q}T_1 - W\|_2 \leq u f_n \|W\|_2, \eqand
+    \|\tilde{Q} - Q\|_2 \leq ug_n ,
+  \end{equation}
+  where $\tilde{Q}$ and $\tilde{Z}$ are unitary, $T_1$ and $T$ are
+  upper triangular, and $T$ is nonsingular.  Then there exist $E$ and
+  $F$ satisfying
+  \begin{equation*}
+    \tilde{Q}^\H (A+E) \tilde{Z} = T_1(I+\sigma T),\eqand \tilde{Q}^\H (B+F) \tilde{Z}
+    = T_1 T.
+  \end{equation*}
+  with
+  \begin{equation*}
+    \frac{\|E\|_2}{\|A\|_2} \leq
+    u \Big(|\sigma_0| (b_n + c_n + d_n + e_n + f_n) \eta \|X\|_2 + (1+|\sigma_0|)(2a_n + d_n+e_n+f_n)\Big) +O(u^2)    
+  \end{equation*}
+  and
+  \begin{equation*}
+    \frac{\|F\|_2}{\|B\|_2} \leq
+    u \left( b_n + c_n +d_n +e_n + f_n\right) \eta \|X\|_2 + O(u^2).
+  \end{equation*}
+\end{theorem}
+\begin{proof}
+  Let $\breve{A} X - B = G_1$, $X - \tilde{Z}T \tilde{Z}^\H = G_2$,
+  $Z - \tilde{Z} = G_3$, $\breve{A}Z - W = G_4$, and
+  $\tilde{Q}T_1 - W = G_5$.  The first two of these identities give
+  \begin{equation*}
+    \breve{A} \tilde{Z} T = B\tilde{Z} + G_1 \tilde{Z} - \breve{A}G_2 \tilde{Z}.
+  \end{equation*}
+  Continuing with various substitutions, we have
+  \begin{equation*}
+    \breve{A} Z T = B\tilde{Z} + G_1 \tilde{Z} - \breve{A}G_2 \tilde{Z} + \breve{A} G_3 T,
+  \end{equation*}
+  \begin{equation*}
+    W T = B\tilde{Z} + G_1 \tilde{Z} - \breve{A}G_2 \tilde{Z} + \breve{A} G_3 T - G_4 T,
+  \end{equation*}
+  and
+  \begin{equation*}
+    \tilde{Q} T_1 T = B\tilde{Z} + G_1 \tilde{Z} - \breve{A}G_2 \tilde{Z} + \breve{A} G_3 T - G_4 T + G_5 T.
+  \end{equation*}
+  This implies that
+  \begin{equation*}
+    B + F = \tilde{Q} T_1 T \tilde{Z}^\H
+  \end{equation*}
+  where
+  \begin{align*}
+    \|F\|_2
+    & \leq \|G_1\|_2 + \|\breve{A}\|_2 \|G_2\|_2 + \|\breve{A}\|_2 \|G_3\|_2 \|T\|_2 +
+      \|G_4\|_2 \|T\|_2 + \|G_5\|_2 \|T\|_2 \\
+    & = \|G_1\|_2 + \|\breve{A}\|_2 \|G_2\|_2 + \|\breve{A}\|_2 \|G_3\|_2 \|X\|_2 +
+      \|G_4\|_2 \|X\|_2 + \|G_5\|_2 \|X\|_2  + O(u^2) \\
+    & \leq u ( b_n \|\breve{A}\|_2 \|X\|_2 + c_n \|\breve{A}\|_2 \|X\|_2 + d_n \|\breve{A}\|_2 \|X\|_2\\
+    & \qquad + e_n \|\breve{A}\|_2 \|X\|_2 + f_n \|W\|_2 \|X\|_2) +O(u^2) \\
+    & = u \left( b_n + c_n +d_n +e_n + f_n\right) \|A-\sigma B\|_2 \|X\|_2 + O(u^2) \\
+    & = u \left( b_n + c_n +d_n +e_n + f_n\right) \eta \|X\|_2 \|B\|_2 + O(u^2).
+  \end{align*}
+  
+  Let $\breve{A} = A-\sigma B + G_0$.  Considering errors on $A$, we
+  start with $W - G_5 = \tilde{Q}T_1$ and continue with substitutions
+  \begin{equation*}
+    \breve{A}Z - G_4 - G_5 = \tilde{Q}T_1,
+  \end{equation*}
+  \begin{equation*}
+    (A-\sigma B + G_0)Z - G_4 - G_5 = \tilde{Q}T_1,
+  \end{equation*}
+  and
+  \begin{equation*}
+    (A-\sigma B + G_0)\tilde{Z} - G_4 + (A-\sigma B+G_0) G_3 - G_5  = \tilde{Q}T_1.
+  \end{equation*}
+  This implies that
+  \begin{multline*}
+    \tilde{Q}^\H \left(A + \sigma F + G_0 + \tilde{Q} \left[(A-\sigma B+G_0) G_3- G_4 -G_5\right] \tilde{Z}^\H\right)
+    \tilde{Z} \\
+    = T_1 + \sigma \tilde{Q}^\H(B+F) \tilde{Z} = T_1 (I+\sigma T),
+  \end{multline*}
+  or
+  \begin{equation*}
+    \tilde{Q}^\H (A+E) \tilde{Z} = T_1(I+\sigma T)
+  \end{equation*}
+  where
+  \begin{align*}
+    \|E\|_2 
+    & \leq |\sigma| \|F\|_2 + \|G_0\|_2 + \|A-\sigma B\|_2 \|G_3\|_2 + \|G_4\|_2 + \|G_5\|_2 + O(u^2) \\
+    & \leq u |\sigma| (b_n + c_n + d_n + e_n + f_n) \eta \|X\|_2 \|B\|_2 + ua_n |\sigma| \|B\|_2 \\
+    & \qquad + u(a_n + d_n+e_n+f_n) \|A-\sigma B\|_2 +O(u^2)\\
+    & \leq u |\sigma_0| (b_n + c_n + d_n + e_n + f_n) \eta \|X\|_2 \|A\|_2 + ua_n |\sigma_0| \|A\|_2 \\
+    & \qquad + u(a_n + d_n+e_n+f_n) (\|A\|_2 + |\sigma_0| \|A\|_2) +O(u^2)\\
+    & \leq u \Big(|\sigma_0| (b_n + c_n + d_n + e_n + f_n) \eta \|X\|_2 \\
+    & \qquad + (1+|\sigma_0|)(2a_n + d_n+e_n+f_n)\Big) \|A\|_2 +O(u^2).\\
+  \end{align*}
+\end{proof}
 
 
 \bibliography{/home/mas/work/bib/ref}

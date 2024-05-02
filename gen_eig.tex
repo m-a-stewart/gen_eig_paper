@@ -1,4 +1,6 @@
 \documentclass[12pt]{article}
+\usepackage[bookmarks=true]{hyperref}
+% \usepackage{refcheck}
 \usepackage[margin=1.25in]{geometry}
 \usepackage{mathtools}
 \usepackage{amsmath}
@@ -38,11 +40,6 @@
 \def\e#1{{\times}10^{#1}}
 \def\diag{\mbox{diag}}
 \def\mcal{\mathcal}
-\newcommand{\minprobc}[3]{
-  \begin{array}{ll}
-    \mbox{min}_{#1} & #2 \\
-    \rule{0pt}{1.1em}\mbox{subject to} & #3
-  \end{array} }
 
 \newenvironment{mtx}[1]{\left[\begin{array}{#1}}{\end{array}\right]}
 \newtheorem{example}{Example}
@@ -53,10 +50,11 @@
 \let\oldenumerate=\enumerate
 \renewenvironment{enumerate}{\oldenumerate\parindent=1.5em}{\endlist}
 
-\bibliographystyle{siam} \title{On Inversion and the Explicit Solution
-  the Generalized Eigenvalue Problem} \author{Michael
-  Stewart\thanks{Department of Mathematics and Statistics, Georgia
-    State University, Atlanta GA 30303, {\tt mastewart@gsu.edu}}}
+\bibliographystyle{siam} \title{An Error Analysis of Explicit Shift
+  and Invert Solution of the Dense Generalized Eigenvalue Problem}
+\author{Michael Stewart\thanks{Department of Mathematics and
+    Statistics, Georgia State University, Atlanta GA 30303, {\tt
+      mastewart@gsu.edu}}}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -95,7 +93,7 @@ or, equivalently, the alternate formulation
   \beta A \vec{v} = \alpha B \vec{v}, \qquad \vec{v}\neq \vec{0},
 \end{equation}
 where $\beta$ and $\alpha$ are not both zero and
-$\lambda = \alpha/\beta$.  If $\beta = 0$, we set $\lambda = \infty$.
+$\lambda = \alpha/\beta$.  If $\beta = 0$, we let $\lambda = \infty$.
 If $A$ and $B$ have a common null space, then any common null vector
 would satisfy \eqref{eq:gen_eig1} or \eqref{eq:gen_eig2} for any
 choice of $\lambda$ or $\alpha$ and $\beta$.  We therefore require
@@ -112,8 +110,8 @@ then the computed $Y$ will have large errors and the computed
 generalized eigenvalues can be inaccurate, even when they are well
 conditioned \cite{govl:13, stew:01}.  If $B-\sigma A$ is well
 conditioned, then one can instead solve $(B-\sigma A) Y = A$.  If the
-eigenvalues of $Y$ are $\gamma_i$, then the eigenvalues in
-\eqref{eq:gen_eig1} are $\lambda_i = \gamma_i/(1+\sigma\gamma_i)$.
+eigenvalues of $Y$ are $\phi_i$, then the eigenvalues in
+\eqref{eq:gen_eig1} are $\lambda_i = \phi_i/(1+\sigma\phi_i)$.
 However, it is not always possible to choose $\sigma$ so that
 $B-\sigma A$ is well conditioned.  Even with the use of a shift, the
 explicit conversion of the generalized eigenvalue problem to an
@@ -330,14 +328,10 @@ Define
   \label{eq:eta_def}
   \eta = \frac{\|A-\sigma B\|_2}{\|B\|_2},
 \end{equation}
+and
 \begin{equation}
   \label{eq:sigma0_def}
   \sigma_0 = \sigma \frac{\|B\|_2}{\|A\|_2},
-\end{equation}
-and
-\begin{equation}
-  \label{eq:gamma_def}
-  \gamma = \frac{\|A\|_2}{\|A-\sigma B\|_2}.
 \end{equation}
 The quantities $\eta$ and $\sigma_0$ are defined with the goal of
 scaling our bounds so that they are independent of how $A$ and $B$ are
@@ -411,7 +405,7 @@ eigenvalue $(1+\sigma\theta_i, \theta_i)$, then
 so that $\vec{v}_i = Z \vec{u}_i$ is an eigenvector for $(A,B)$.  
 
 \begin{algorithm}
-\caption{Spectral Transformation for \eqref{eq:sym_gen_eig}}
+\caption{Shift and Invert Schur Decomposition}
 \label{alg:gen_schur}
 \begin{algorithmic}
 \Function{GenSchur}{$A, B, \sigma$}
@@ -476,6 +470,7 @@ bounds for Algorithm~\ref{alg:gen_schur}.
   $a_n$, $b_n$, $c_n$, $d_n$, $e_n$, $f_n$, and $g_n$ depending solely
   on $n$ for which
   \begin{equation}
+    \label{eq:shift_error}
     \|\breve{A} - (A-\sigma B)\|_2 \leq u a_n (\|A-\sigma B\|_2 + |\sigma| \|B\|_2),
   \end{equation}
   \begin{equation}
@@ -584,6 +579,110 @@ bounds for Algorithm~\ref{alg:gen_schur}.
     & \qquad + (1+|\sigma_0|)(2a_n + d_n+e_n+f_n)\Big) \|A\|_2 +O(u^2).\\
   \end{align*}
 \end{proof}
+
+Algorithm~\ref{alg:gen_schur} computes a generalized Schur decomposition
+from $B$ and $A-\sigma B$.  We define
+\begin{equation}
+  \label{eq:gamma_def}
+  \gamma = \frac{\|A\|_2}{\|A-\sigma B\|_2}
+\end{equation}
+as a measure of catastrophic cancellation in forming $A-\sigma B$ that
+might compromise stability.  Cancellation did not turn out to be a
+concern in Theorem~\ref{th:generalized_schur}, but the quantity
+$|\sigma_0| \gamma$ will appear in the residual bounds.  This quantity
+is large only if $\gamma$ is large, regardless of the magnitude of
+$|\sigma_0|$.  To see this note that
+\begin{equation*}
+  |\sigma_0| \gamma 
+  \leq \frac{|\sigma_0| \|A\|_2}{| \|A\|_2 - |\sigma| \|B\|_2|}
+  = \frac{|\sigma_0| \|A\|_2}{| \|A\|_2 - |\sigma_0| \|A\|_2|}
+  = \frac{|\sigma_0|}{|1-|\sigma_0||}.
+\end{equation*}
+If $|\sigma_0| \leq 2$, then $|\sigma_0 \gamma| \leq 2\gamma$.  If
+$|\sigma_0| > 2$, then the above inequality implies that
+$|\sigma_0| \gamma \leq 2$.  Thus, with no assumption on $\sigma_0$,
+we have
+\begin{equation*}
+  \label{eq:sigma0_gamma_bound}
+  |\sigma_0|\gamma \leq 2\max(\gamma, 1).
+\end{equation*}
+
+
+\begin{theorem}
+  \label{th:residual_bounds}
+  Assume that \eqref{eq:shift_error} and \eqref{eq:Xerror} hold.
+  Suppose that a computed eigenvalue $\theta\neq 0$ and eigenvector
+  $\vec{v}$ of $X$ satisfy
+  \begin{equation*}
+    X\vec{v} - \theta \vec{v} = \vec{r},
+    \qquad\text{with}\qquad
+    \|\vec{r}\|_2 \leq u g_n \|X\|_2 \|\vec{v}\|_2.
+  \end{equation*}
+  Let $\lambda = \sigma + 1/\theta$, with $\lambda = \infty$ if
+  $\theta = 0$.  Then
+  \begin{multline}
+    \label{eq:eq:res_bound_large_eig}
+    \| \theta A \vec{v} - (1+\sigma \theta) B\vec{v} \|_2 \\
+    \leq u |1+\sigma \theta| \cdot |1-\sigma/\lambda|
+    \Big( b_n + g_n  + a_n (1+2\max(\gamma, 1))  \Big)\eta \|X\|_2\|B\|_2 \|\vec{v}\|_2 
+    + O(u^2),
+  \end{multline}
+  where we take $|1-\sigma/\lambda| = 1$ if $\lambda = \infty$ and
+  $|1-\sigma/\lambda| = \infty$ if $\lambda = 0$ so that the bound is
+  vacuous if $\lambda = 0$.  We also have
+  \begin{multline}
+    \label{eq:eq:res_bound_small_eig}
+    \| \theta A \vec{v} - (1+\sigma \theta) B\vec{v} \|_2 \\
+    \leq u |\theta| \cdot |\sigma_0| \cdot |1-\lambda/\sigma|
+    \Big( b_n + g_n  + a_n (1+2\max(\gamma, 1))  \Big)\eta \|X\|_2\|A\|_2 \|\vec{v}\|_2 
+    + O(u^2),
+  \end{multline}
+\end{theorem}
+\begin{proof}
+  With $G_0$ and $G_1$ as defined in the proof of Theorem~\ref{th:generalized_schur} we have
+  \begin{equation*}
+    (\breve{A}-G_0)X \vec{v} - \theta(A-\sigma B) \vec{v} = (A-\sigma B)\vec{r},
+  \end{equation*}
+  \begin{equation*}
+    (B + G_1 - G_0 X)\vec{v}- \theta(A-\sigma B) \vec{v} = (A-\sigma B)\vec{r},
+  \end{equation*}
+  and
+  \begin{equation*}
+    \theta A \vec{v} - (1+\sigma \theta) B\vec{v} = G_1\vec{} - G_0 X \vec{v} - (A-\sigma B)\vec{r}.
+  \end{equation*}
+  It follows that
+  \begin{align}
+    \| \theta A \vec{v} - (1+\sigma \theta) B\vec{v} \|_2 
+    & \leq u \Big( b_n \|\breve{A}\|_2\|X\|_2 + a_n (\|\breve{A}\|_2
+      + |\sigma| \|B\|_2) \|X\|_2 \nonumber\\
+    & \qquad + g_n \|A-\sigma B\|_2 \|X\|_2 \Big) \|\vec{v}\|_2 \nonumber\\
+    & = u \Big( (a_n+b_n+g_n) \eta \|X\|_2 \|B\|_2 
+      + a_n |\sigma_0| \|A\|_2 \|X\|_2\Big) \|\vec{v}\|_2  \nonumber\\
+    & \qquad + O(u^2) \nonumber\\
+    & = u \Big( b_n + g_n  + a_n (1+|\sigma_0| \gamma)  \Big)\eta \|X\|_2\|B\|_2
+      \|\vec{v}\|_2 \label{eq:res_proof_bound}.
+  \end{align}
+  We note that
+  \begin{equation*}
+    1+\sigma \theta 
+    = 1 + \sigma \frac{1}{\lambda - \sigma} 
+    = \frac{1}{1-\sigma/\lambda},
+  \end{equation*}
+  which together with \eqref{eq:res_proof_bound} and
+  \eqref{eq:sigma0_gamma_bound} implies \eqref{eq:eq:res_bound_large_eig}.  With
+  \begin{equation*}
+    \theta 
+    = \frac{1}{\lambda - \sigma} = \frac{\|B\|_2}{\sigma_0 \|A\|_2 (\lambda/\sigma - 1)}
+  \end{equation*}
+  we obtain
+  \begin{equation*}
+    \|B\|_2 = |\sigma_0(1- \lambda/\sigma)| \|A\|_2,
+  \end{equation*}
+  which substituted into \eqref{eq:res_proof_bound} gives
+  \eqref{eq:eq:res_bound_small_eig}.
+\end{proof}
+
+
 
 
 \bibliography{/home/mas/work/bib/ref}

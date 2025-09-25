@@ -7,6 +7,7 @@
 % \usepackage{amsthm}
 \usepackage{amsfonts}\usepackage{bm}
 \usepackage{amssymb}
+\usepackage{bbold}
 \usepackage{algorithm}
 \usepackage[noEnd=false,indLines=false]{algpseudocodex}
 \usepackage{colortbl}\usepackage{multirow}\usepackage{url}
@@ -18,8 +19,8 @@
 \renewcommand{\bottomfraction}{1}
 \renewcommand{\textfraction}{0}
 \DeclareMathOperator*{\argmin}{arg\,min}
-\def\R{ {\mathbb R}}\def\C{ {\mathbb C}}\def\N{ {\mathbb N}}
-\def\P{{\mathbb P}}\def\Z{{\mathbb Z}}
+\def\R{\mathbb{R}}\def\C{\mathbb{C}}\def\N{\mathbb{N}}
+\def\P{\mathbb{P}}\def\Z{\mathbb{Z}}
 \def\alt{\mathrel{\raisebox{-.75ex}{$\mathop{\sim}\limits^{\textstyle <}$}}}
 \def\ctp{^{\rm H}}\def\dia{{\rm diag}}\def\fro{_{\rm F}}\def\trp{^{\rm T}}
 \def\trace{\operatorname{tr}}
@@ -49,7 +50,7 @@
 \renewenvironment{enumerate}{\oldenumerate\parindent=1.5em}{\endlist}
 
 \bibliographystyle{siam}
- \title{Error Bounds for the Shift and Invert Solution
+ \title{Pseudospectra and the Shift and Invert Solution
   of the Generalized Eigenvalue Problem}
 \author{Michael Stewart\thanks{Department of Mathematics and
     Statistics, Georgia State University, Atlanta GA 30303, {\tt
@@ -139,8 +140,9 @@ nonzero.  This paper focuses on the numerical properties of the eigenvalue
 problem (\ref{eq:X_problem}) as a means for solving (\ref{eq:gen_eig2}).
 However, the error bounds depend on the eigenvalues $\lambda_i$ of
 (\ref{eq:gen_eig1}) and on properties of the matrix $B^{-1}A$.\footnote{If $B$
-  is nonsingular.  In \S\ref{sec:shift} we go to some effort to formulate
-  theorems that also apply when $B$ is singular.}
+  is nonsingular.  In\S~\ref{sec:pseudospectra} and \S\ref{sec:pseud-bounds-k2}
+  we go to some effort to formulate theorems that also apply when $B$ is
+  singular.}
 
 Unfortunately, it is not always possible to choose $\sigma$ so that
 $A-\sigma B$ is well conditioned.  Even with the use of a shift, the explicit
@@ -181,7 +183,12 @@ then we will see in the error bounds that
   K_2(A-\sigma B, B) = \frac{\|A-\sigma B\|_2}{\|B\|_2} \|(A-\sigma B)^{-1} B\|_2
 \end{equation}
 is the key factor affecting the stability, or lack of stability, of the shift
-and invert approach.  If we define a scaled shift and scaled eigenvalues
+and invert approach.  Note that if $B$ is nonsingular then
+$\|(A-\sigma B)^{-1}B\|_2= \|(B^{-1}A-\sigma I)^{-1}\|_2$ is the resolvent norm
+of $B^{-1}A$, which immediately suggests a connection to the pseudospectrum of
+$B^{-1}A$.
+
+If we define a scaled shift and scaled eigenvalues
 \begin{equation}
   \label{eq:scaled_eig_shift}
   \hat{\sigma} = \frac{\|B\|_2}{\|A\|_2} \sigma, \qquad
@@ -204,7 +211,7 @@ For $K_2(A-\sigma B, B)$, we have the similar identity
 Thus $K_2(A- \sigma B, B)$ does not change with scaling of $A$ and $B$, so long as
 the shift is scaled accordingly.
 
-It is shown in \S\ref{sec:shift} that
+It is shown in \S~\ref{sec:pseud-bounds-k2} that
 \begin{equation}
   \label{eq:upper_lower_bounds}
   \frac{\|\hat{A}-\hat{\sigma} \hat{B}\|_2}{\min_i |\hat{\lambda_i} - \hat{\sigma}|}
@@ -219,35 +226,349 @@ bound will be seen to be an equality if $(A,B)$ has a complete orthonormal set
 generalized eigenvectors.  If $B$ is nonsingular, this is equivalent to
 $B^{-1}A$ being normal.  In the case in which $(A,B)$ has orthonormal
 eigenvectors, it is often not too difficult to select a shift for which
-$K_2(A - \sigma B, B)$ is not large.  The magnitude of $K_2(A-\sigma B, B)$ has
-a pseudospectral characterization that we present in \S\ref{sec:shift}.
+$K_2(A - \sigma B, B)$ is not large.
 
 
-The structure of the paper is as follows.  In \S\ref{sec:shift} we consider the
-quantity $K_2(A-\sigma B, B)$ in greater detail and relate it to the location
-of the shift in relation to the a minor generalization of the pseudospectrum of
-$B^{-1}A$ that is defined when $B$ is singular.  In
-\S\ref{sec:algor-error-analys} we give error bounds for an algorithm that uses
-shift and invert to compute a generalized Schur decomposition of $(A,B)$.  In
-\S\ref{sec:residual-bounds} we present bounds that relate residuals for the
-ordinary eigenvalue problem (\ref{eq:X_problem}) to residuals for the
-generalized eigenvalue problem (\ref{eq:gen_eig2}).  The magnitude of
-$K_2(A-\sigma B, B)$ is the key measure of instability in both
-\S\ref{sec:algor-error-analys} and \S\ref{sec:residual-bounds}.
+The structure of the paper is as follows.  In \S\ref{sec:pseudospectra} we
+consider a definition of the pseudospectrum of the pair $(A,B)$.  In
+\S\ref{sec:pseud-bounds-k2} we give a characterization of $K_2(A-sigma B,B)$ in
+terms of the pseudospectrum of $(A,B)$.  In \S\ref{sec:algor-error-analys} we
+give error bounds for an algorithm that uses shift and invert to compute a
+generalized Schur decomposition of $(A,B)$.  In \S\ref{sec:residual-bounds} we
+present bounds that relate residuals for the ordinary eigenvalue problem
+(\ref{eq:X_problem}) to residuals for the generalized eigenvalue problem
+(\ref{eq:gen_eig2}).  The magnitude of $K_2(A-\sigma B, B)$ is the key measure
+of instability in both \S\ref{sec:algor-error-analys} and
+\S\ref{sec:residual-bounds}.
 
-\section{Choosing a Shift}
-\label{sec:shift}
+\section{Pseudospectra of $(A,B)$}
+\label{sec:pseudospectra}
 
 In this section, we consider the choice of shift and its impact on
 $K_2(A-\sigma B, B)$.  A rough summary of where we will end up is that we can
 expect to have useful error bounds when $\sigma$ is not in the
 $\epsilon$-pseudospectrum of $B^{-1}A$ for small $\epsilon$.  However, we do
-not want to assume that $B$ is nonsingular, so we slightly modify some standard
-results on pseudospectra to accommodate the possibility that $B$ is singular.
-We do assume that $B\neq 0$.
+not want to assume that $B$ is nonsingular.  We begin by modifying some
+standard results on pseudospectra to accommodate singular $B$.
 
-Before trying to precisely characterize the magnitude of $K_2(A-\sigma B, B)$,
-we first revisit the bounds from \S\ref{sec:background}.
+In addition to just looking at the pseudospectrum of $B^{-1}A$ when $B$ is
+nonsingular, there are several of generalizations of pseudospectra to matrix
+pencils.  See \cite{trem:05} for a survey.  Most of these assume that $B$ is
+nonsingular.  Notable exceptions include the approaches of \cite{hiti:02} and
+\cite{emke:17}.  The former uses a definition that allows independent
+perturbation of $A$ and $B$.  The latter focuses on applications to
+differential algebraic equations and uses a Schur factorization to isolate zero
+eigenvalues of $(A-\sigma B)^{-1}B$, corresponding to infinite eigenvalues of
+$(A,B)$, in a nilpotent block in order to remove them from consideration.
+Neither approach seems well aligned with our goal of understanding the effect
+of $\sigma$ on the bounds to be proven in \S\ref{sec:algor-error-analys} and
+\S\ref{sec:residual-bounds}.  We instead consider a definition of the
+pseudospectrum that includes infinite eigenvalues and exactly matches the
+pseudospectrum of $B^{-1}A$ when $B$ is nonsingular.
+
+We assume throughout that $(A,B)$ is a regular pair.  For
+$\widehat{\C} = \C\cup \{\infty\}$, let $\Lambda_0(A,B)\subseteq \widehat{\C}$
+denote the set of generalized eigenvalues of $(A,B)$.  For $\epsilon > 0$, we
+define the $\epsilon$-pseudospectrum of $(A,B)$ by
+\begin{equation}
+  \label{eq:pseudo_def}
+  \Lambda_\epsilon(A,B) = \left\{ \sigma \in \widehat{\C} :
+    \text{$\sigma \in \Lambda_0(A-BE, B)$ for some $E$
+      with $\|E\|_2 < \epsilon$} \right\}.
+\end{equation}
+When $B$ happens to be nonsingular, this is easily seen to be the
+$\epsilon$-pseudospectrum of $B^{-1}A$.  The pair $(A-BE, B)$ has infinite
+generalized eigenvalues if and only if $B$ is singular and, hence, if and only
+if $(A, B)$ has infinite eigenvalues.  It follows that for any $\epsilon > 0$,
+$\infty \in \Lambda_\epsilon(A,B)$ if and only if $\infty \in \Lambda_0(A,B)$.
+
+Let
+\begin{equation*}
+  \mcal{E}(A,B,\sigma) = \{E : \sigma \in \Lambda_0(A- BE, B)\}.
+\end{equation*}
+For $\sigma \in \widehat{\C}$, we can define
+\begin{equation}
+  \label{eq:delta_def}
+  \delta(A, B, \sigma) 
+  = \inf_{E\in \mcal{E}(A,B,\sigma)} \|E\|_2,
+\end{equation}
+with the convention that if the set $\mcal{E}(A,B,\sigma)$ is empty, then
+$\delta(A, B, \sigma) = \infty$.  It is easily seen that $\delta(A,B,\infty)=0$
+if $B$ is singular and $\delta(A,B,\infty) = \infty$ if $B$ is nonsingular.
+For brevity in longer equations, we sometimes assume that $A$ and $B$ are given
+and let $\delta(\sigma) = \delta(A, B, \sigma)$.  We refer to
+$\delta(A,B,\sigma)$ as the \textit{pseudospectral separation} of $\sigma$ from
+$\Lambda_0(A,B)$.
+
+We will show in the proof of Lemma~\ref{lm:X_norm_bound} that with $B\neq 0$
+and $\sigma \in \C$, $\mcal{E}(A,B,\sigma)$ is nonempty and there exists
+$E_0\in \mcal{E}(A,B,\sigma)$ for which $\delta(A,B,\sigma)=\|E_0\|_2 <\infty$.
+Assuming this for the moment, we have the following lemma.
+\begin{lemma}
+  \label{lm:delta_pseudo}
+  If $(A,B)$ is regular, then
+  \begin{equation}
+    \label{eq:pseudo-def-delta}
+    \Lambda_\epsilon(A,B) = \left\{ \sigma \in \widehat{\C} : \delta(A,B,\sigma) < \epsilon\right\}.
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  If $B\neq 0$, $\sigma\in \C$, and $\delta(A,B,\sigma)< \epsilon$, then there
+  exists $E_0$ with $\|E_0\|_2 < \epsilon$ for which
+  $\sigma \in \Lambda_0(A-BE_0, B)$ so that $\sigma$ is in
+  $\Lambda_\epsilon(A,B)$ as defined in \eqref{eq:pseudo_def}.  The matrix
+  $E_0$ is constructed using a generalized SVD in the proof of
+  Lemma~\ref{lm:X_norm_bound} below.  Conversely, if
+  $\delta(A,B,\sigma)\geq \epsilon$, then $\|E\|_2 \geq \epsilon$ for all $E$
+  with $\sigma\in \Lambda_0(A-BE, B)$.  Thus, for $B\neq 0$ and $\sigma\in\C$,
+  $\sigma$ is in the $\epsilon$-pseudospectrum of $(A,B)$ if and only
+  $\delta(A,B,\sigma) < \epsilon$.
+
+  If $B=0$, then regularity requires that $A$ be nonsingular.  For
+  $\sigma \in \C$ and $B=0$, it follows that $\mcal{E}(A,B,\sigma)$ is empty,
+  since $\sigma \in \Lambda_0(A-BE, B)$ would require
+  $(A- BE)\vec{x} = \sigma B\vec{x}$ or $A\vec{x} =\vec{0}$ for
+  $\vec{x}\neq \vec{0}$.  So by definition
+  \eqref{eq:pseudo_def}$, \Lambda_\epsilon(A,B)$ contains no $\sigma \in \C$.
+  In this case, since $\mcal{E}(A,B,\sigma)$ is empty,
+  $\delta(A,B,\sigma)=\infty$ and \eqref{eq:pseudo-def-delta} also gives no
+  $\sigma\in\C$ in $\Lambda_\epsilon(A,B)$.  Thus, for all $\sigma \in \C$,
+  \eqref{eq:pseudo_def} and \eqref{eq:delta_def} include the same values.
+
+
+  We have already noted in relation to \eqref{eq:pseudo_def} that
+  $\infty\in \Lambda_\epsilon(A,B)$ if and only if $B$ is singular.  If $B$ is
+  singular, then $\delta(A,B,\infty) = 0$ so that \eqref{eq:pseudo-def-delta}
+  also implies that $\infty \in \Lambda_\epsilon(A,B)$.  If $B$ is nonsingular,
+  then $\mcal{E}(A,B,\infty)$ is empty and $\delta(A,B,\infty) = \infty$, so
+  that \eqref{eq:pseudo-def-delta} gives $\infty \notin \Lambda_\epsilon(A,B)$.
+  Thus, for all $\sigma \in \widehat{\C}$, \eqref{eq:pseudo_def} and
+  \eqref{eq:delta_def} include the same values.
+\end{proof}
+
+If $B$ is nonsingular and $\sigma$ is not an eigenvalue of $B^{-1}A$, then it
+is well known that $\sigma$ is in the $\epsilon$-pseudospectrum of $B^{-1}A$ if
+and only if $\|(B^{-1}A - \sigma I)^{-1}\|_2 > 1/\epsilon$.  This is equivalent
+to $\delta(A, B, \sigma) = 1/\|(B^{-1}A - \sigma I)^{-1}\|_2$.  The following lemma
+reformulates this result to avoid assuming invertibility of $B$.
+\begin{lemma}
+  \label{lm:X_norm_bound}
+  Let $(A,B)$ be regular.  With $\delta(A, B, \sigma)$ defined as in
+  \eqref{eq:delta_def}, we have
+  \begin{equation*}
+     \delta(A, B, \sigma) 
+     = 
+     \begin{cases}
+       \frac{1}{\|(A-\sigma B)^{-1} B\|_2}, 
+       & \text{$\sigma\in\C$ and $\sigma \notin \Lambda_0(A,B)$}, \\
+       \infty, & \text{$\sigma=\infty$ and $\infty \notin \Lambda_0(A,B)$}, \\
+       0, & \sigma \in \Lambda_0(A,B), \\
+       \end{cases}
+  \end{equation*}
+  where in the first case we let $1/\|(A-\sigma B)^{-1} B\|_2 = \infty$ if $B=0$.
+\end{lemma}
+\begin{proof}
+  We assume the conditions of the first case.  If $B=0$, then
+  $\mcal{\mcal{E}}(A,B,\sigma)$ is empty and $\delta(A,B,\sigma) = \infty$.
+  Suppose that $B\neq 0$.  The matrix $A-\sigma B$ is nonsingular and we
+  consider the generalized singular value decomposition
+  \begin{equation*}
+    A - \sigma B = S I U^\H,\eqand
+    B = S D V^\H,
+  \end{equation*}
+  where $S=(A-\sigma B)U$ is invertible, $(A-\sigma B)^{-1} B = U D V^\H$, $U$
+  and $V$ are unitary, $D = \diag(d_1, \ldots, d_n)$, $d_1 > 0$, and
+  $d_k\geq 0$ is nonincreasing for $k=1,2,\ldots, n$.  Clearly
+  $A-\sigma B - BE = S (I - D V^\H E U) U^\H$ is singular if and only if
+  $(I - D V^\H E U)$ is singular which implies that $\|E\|_2 \geq 1/\|D\|_2$ or
+  that $\|E\|_2 \geq 1/d_1$ for all $E\in\mcal{E}(A,B,\sigma)$.  Thus
+  \begin{equation*}
+    \delta(A,B,\sigma)
+    = \inf_{E \in \mcal{E(A,B,\sigma)}} \|E\|_2
+    \geq \frac{1}{d_1}
+    = \frac{1}{\|(A-\sigma B)^{-1}B\|_2}.
+  \end{equation*}
+  Let  
+  \begin{equation*}
+    E_0 = \frac{1}{d_1}V \vec{e}_1 \vec{e}_1^\H U^\H.
+  \end{equation*}
+  Then
+  \begin{equation*}
+    A-\sigma B - B E_0 = S (I-\vec{e}_1 \vec{e}_1^\H) U^\H
+  \end{equation*}
+  is singular so that
+  \begin{equation*}
+    \delta(A,B,\sigma)
+    \leq \|E_0\|_2 
+    = \frac{1}{d_1} = \frac{1}{\|(A-\sigma B)^{-1} B\|_2}.
+  \end{equation*}
+  This establishes the first case.
+
+  For the second case, the second condition implies that $B$ is nonsingular so
+  that $\mcal{(A,B,\infty)}$ is empty and $\delta(A,B,\sigma) = \infty.$ The
+  third case implies that $E=0$ is in $\mcal{E}(A,B,\sigma)$ so that
+  $\delta(A,B,\sigma)=0$.
+\end{proof}
+
+
+If $B^{-1}A$ is normal then it is easily seen that
+$\delta(\sigma) = \min_i |\lambda_i - \sigma|$, where the minimum is taken over
+all generalized eigenvalues $\lambda_i$ of $(A,B)$.  This also generalizes to
+the case in which $B$ is singular.
+\begin{lemma}
+  \label{lm:normal_eig_bound}
+  Assume that $(A,B)$ is a regular pair with an orthonormal basis of
+  generalized eigenvectors $\vec{v}_i$, $i = 1, \ldots, n$. Then for
+  $\sigma \in \widehat{C}$ we have
+  \begin{equation}
+    \label{eq:normal_delta}
+    \delta(A,B,\sigma) = \min_i |\lambda_i - \sigma|,
+  \end{equation}
+  where we assume $|\lambda_i - \sigma| = 0$ if $\lambda_i=\sigma=\infty$ and
+  $|\lambda_i - \sigma| = \infty$ if exactly one of $\lambda_i$ or $\sigma$
+  equals $\infty$.
+\end{lemma}
+\begin{proof}
+  We first consider $\sigma = \infty$.  The claim follows immediately with
+  $\delta(A,B,\sigma)=0$ if $\sigma$ is a generalized eigenvalue of $(A,B)$,
+  including the case of $\sigma = \infty$.  We have already noted that
+  $\delta(A,B,\infty)=\infty$ when $B$ is nonsingular and $\infty$ is not a
+  generalized eigenvalue of $(A,B)$.  Both of these cases are consistent with
+  \eqref{eq:normal_delta}.
+  
+
+  We consider the more interesting case $\sigma\in\C$.  If $B=0$, then $(A,B)$
+  has no finite generalized eigenvalues and $\delta(A,B,\sigma)=\infty$, which
+  is consistent with \eqref{eq:normal_delta}.  As above, if
+  $\sigma\in\Lambda_0(A)$, \eqref{eq:normal_delta} follows with
+  $\delta(A,B,\sigma)=0$.  So we assume that $B\neq 0$ and that $A-\sigma B$ is
+  nonsingular.  Let $V$ be the unitary matrix with $i$th column $\vec{v}_i$.
+  For each generalized eigenvector we have
+  $\beta_i A\vec{v}_i = \alpha_i B \vec{v}_i$, where regularity ensures that we
+  do not have both $A\vec{v}_i=\vec{0}$ and $B\vec{v}_i= \vec{0}$.  It follows
+  that the set $\{A\vec{v}_i, B\vec{v}_i\}$ spans a subspace of dimension one.
+  Let $\vec{s}_i\neq \vec{0}$ be in this space and let $S$ be the matrix with
+  $i$th column $\vec{s}_i$.  We then have
+  \begin{equation*}
+    AV = S D_a, \eqand
+    BV = S D_b
+  \end{equation*}
+  for diagonal matrices $D_a$ and $D_b$.  Thus
+  \begin{equation*}
+    (A-\sigma B) V = S (D_a - \sigma D_b).
+  \end{equation*}
+  Since $A-\sigma B$ is nonsingular and $V$ is unitary, $S$ must be
+  nonsingular.  Let the diagonal elements of $D_a$ be $\hat{\alpha}_i$ and
+  those of $D_b$ be $\hat{\beta}_i$ for $i=1,\ldots, n$.  We have
+  \begin{align*}
+    A - \sigma B - BE 
+    & = S (D_a - \sigma D_b - D_b V^\H E V) V^\H \\
+    & = S (D_a - \sigma D_b)\left( I - (D_a - \sigma D_b)^{-1} D_b V^\H E V \right) V^\H.
+  \end{align*}
+  This is singular if and only if $I - (D_a - \sigma D_b)^{-1} D_b V^\H E V$ is
+  singular which implies
+  \begin{equation*}
+    \|(D_a - \sigma D_b)^{-1} D_b\|_2 \|V^\H E V\|_2 \geq \|(D_a - \sigma D_b)^{-1} D_b V^\H E V\|_2 \geq 1.
+  \end{equation*}
+  We have
+  \begin{equation*}
+    (D_a - \sigma D_b)^{-1} D_b = \diag\left(\frac{1}{(\lambda_1-\sigma)},
+      \ldots, \frac{1}{(\lambda_n-\sigma)}\right)
+  \end{equation*}
+  so that
+  \begin{equation}
+    \label{eq:E_lower_bound}
+    \|E\|_2 \geq\frac{1}{\|(D_a - \sigma D_b)^{-1} D_b\|_2} 
+    = \frac{1}{\max_i 1/|\lambda_i - \sigma|} = \min_i |\lambda_i - \sigma|.
+  \end{equation}
+  The pair $(A,B)$ has a finite generalized eigenvalue for each $\hat{\beta}_i$
+  satisfying $\hat{\beta}_i\neq 0$.  Since we have assumed that
+  $B = S D_b V^\H\neq 0$, we must have at least one nonzero $\hat{\beta}_i$ so
+  that $\min_i |\lambda_i - \sigma|$ is finite.  Without loss of generality,
+  assume that the columns of $V$ and $S$ are permuted so that
+  $|\lambda_1 - \sigma| = \min_i |\lambda_i - \sigma|$ and
+  $\hat{\beta}_1\neq 0$.  Then
+  \begin{equation*}
+    E = \frac{\hat{\alpha}_1 - \sigma \hat{\beta}_1}{\hat{\beta}_1} V \vec{e}_1 \vec{e}_1^\T V^\H =
+    (\lambda_1 - \sigma) V \vec{e}_1 \vec{e}_1^\T V^\H
+  \end{equation*}
+  ensures that $ I - (D_a - \sigma D_b)^{-1} D_b V^\H E V$ is singular with
+  $\vec{e}_1$ as a null vector.  Hence $A-\sigma B - BE$ is singular and, since
+  it achieves the lower bound (\ref{eq:E_lower_bound}), this choice of $E$ also
+  has minimal norm with $\delta(A,B,\sigma) = \|E\|_2$ satisfying
+  \eqref{eq:normal_delta}.
+\end{proof}
+
+\begin{lemma}
+  \label{lm:bauer_fike_bound}
+  Let $(A,B)$ regular.  Assume that the columns of $V$ give a complete set of
+  eigenvectors for $(A,B)$.  Then
+  \begin{equation}
+    \label{eq:bauer-fike-bound}
+    \frac{1}{\delta(A,B,\sigma)}
+    \leq \kappa_2(V) \frac{1}{\min_i |\lambda_i - \sigma|},
+  \end{equation}
+  where we make the same assumptions as Lemma~\ref{lm:normal_eig_bound} about
+  $\min_i |\lambda_i - \sigma|$ when either $\lambda_i=\infty$ or
+  $\sigma = \infty$.
+\end{lemma}
+\begin{proof}
+  The case $\sigma = \infty$ is the same as in the proof of
+  Lemma~\ref{lm:normal_eig_bound}, with $\delta(A,B,\sigma) = 0$ or
+  $\delta(A,B\sigma)=\infty$, depending on whether $(A,B)$ has an infinite
+  eigenvalue.  The case $B=0$ and $\sigma\in \Lambda_0(A,B)$ are also similar.
+  So we assume that $\sigma\in\C$, $B\neq 0$, and $A-\sigma$ is singular.  The
+  rest of the proof is also similar to the first part of
+  Lemma~\ref{lm:bauer_fike_bound}.  Let
+  $\beta_i A \vec{v}_i = \alpha_i B \vec{v_i}$ with $\alpha_i$ and $\beta_i$
+  not both zero.  We can construct a nonsingular $S$ such that $A V = SD_a$ and
+  $BV= SD_b$, where the diagonal elements of $D_a$ are $\hat{\alpha}_i$ and
+  those of $D_b$ are $\hat{\beta}_i$.  We then have
+  \begin{multline*}
+    \|(A-\sigma B)^{-1} B\|_2
+    = \|V (D_a - \sigma D_b)^{-1} D_b V^{-1}\|_2
+    \leq \kappa_2(V) \|(D_a - \sigma D_b)^{-1} D_b \|_2 \\
+    = \kappa_2(V) \frac{1}{\min_i | \lambda_i - \sigma|}.
+  \end{multline*}
+\end{proof}
+
+% Finally, we can bound $K_2(A-\sigma B, B)$ in terms of the condition number of
+% the matrix of generalized eigenvectors.
+% \begin{lemma}
+%   \label{lm:bauer_fike_bound}
+%   Let $B\neq 0$ and $\sigma \notin \Lambda_0$.  Assume that the columns of $V$ give a
+%   complete set of eigenvectors for $(A,B)$.  Then
+%   \begin{equation*}
+%     K_2(A-\sigma B, B) 
+%     \leq \kappa_2(V) \frac{\|\hat{A} - \hat{\sigma} \hat{B}\|_2}
+%     {\min_i |\hat{\lambda}_i - \hat{\sigma}|}
+%     = \kappa_2(V) \frac{1+|\hat{\sigma}|}{\min_i |\hat{\lambda}_i - \hat{\sigma}|}
+%     = \kappa_2(V) \frac{1+1/|\hat{\sigma}|}{\min_i |1 - \hat{\lambda}_i / \hat{\sigma}|}.
+%   \end{equation*}
+% \end{lemma}
+% \begin{proof}
+%   The proof uses the same approach as the start of the proof of
+%   Lemma~\ref{lm:normal_eig_bound}.  Let
+%   $\beta_i A \vec{v}_i = \alpha_i B \vec{v_i}$ with $\alpha_i$ and $\beta_i$ no
+%   both zero.  As in Lemma~\ref{lm:normal_eig_bound} we can construct an $S$
+%   such that $A V = SD_a$ and $BV= SD_b$ where the diagonal elements of $D_a$
+%   are $\hat{\alpha}_i$ and those of $D_b$ are $\hat{\beta}_i$.  We then have
+%   \begin{multline*}
+%     \|(A-\sigma B)^{-1} B\|_2
+%     = \|V (D_a - \sigma D_b)^{-1} D_b V^{-1}\|_2
+%     \leq \kappa_2(V) \|(D_a - \sigma D_b)^{-1} D_b \|_2 \\
+%     = \kappa_2(V) \frac{1}{\min_i | \lambda_i - \sigma|}.
+%   \end{multline*}
+%   The bounds involving scaled matrices and quantities are given by the same
+%   manipulation we have used in \eqref{eq:upper_bound_for_lower_bound}.
+% \end{proof}
+
+\section{Pseudospectral Bounds on $K_2(A,B)$}
+\label{sec:pseud-bounds-k2}
+
+We revisit the quantity $K_2(A-\sigma B, B)$ introduced in
+\S\ref{sec:background}, starting by proving the bounds
+\eqref{eq:upper_lower_bounds}.
 \begin{lemma}
   The quantity $K_2(A-\sigma B, B)$ satisfies (\ref{eq:upper_lower_bounds}).
 \end{lemma}
@@ -271,7 +592,7 @@ we first revisit the bounds from \S\ref{sec:background}.
     \|(A-\sigma B)^{-1} B\|_2 
     \geq \rho(T) 
     = \max_i \left| \frac{\beta_i}{\alpha_i - \sigma \beta_i} \right|
-    = \max_i \frac{1}{|\lambda_i - \sigma|},
+    = \max_i \frac{1}{|\lambda_i - \sigma|}
     = \frac{1}{\min_i |\lambda_i - \sigma|},
   \end{equation*}
   where $\rho(T)$ is the spectral radius of $T$.  It should be understood that
@@ -304,199 +625,6 @@ magnitude of the shift.  However, for large shift we can note that
 so that for larger scaled shifts, the magnitude of the lower bound is
 constrained by the relative distance of $\sigma$ from a generalized eigenvalue.
 For small scaled shifts, the absolute distance is more important.
-
-If $B$ is nonsingular, then the quantity $\|(A-\sigma B)^{-1} B\|_2$ used in
-the definition of $K_2(A-\sigma B, B)$ is just the resolvent norm
-$\|(B^{-1}A - \sigma I)^{-1}\|_2$.  This establishes a connection to the
-pseudospectrum of $B^{-1}A$, \cite{trem:05}.  We now proceed to extend this
-connection to the case in which $B$ might be singular.
-\begin{lemma}
-  \label{lm:pseudo-E}
-  For $n\times n$ matrices $C$ and $B\neq 0$, let
-  \begin{equation}
-    \label{eq:E_def}
-    \mathcal{E}(C,B) = 
-    \left\{ E \mid \mbox{$C - B E$ is singular} \right\}.
-  \end{equation}
-  The set $\mcal{E}(C, B)$ is nonempty, closed, and contains $E_0$ for which
-  \begin{equation*}
-    \|E_0\|_2 = \min_{E\in\mcal{S}(C,B)} \|E\|_2.
-  \end{equation*}
-\end{lemma}
-\begin{proof}
-  To see that $\mcal{E}(C,B)$ is nonempty, we note that if $C$ is singular,
-  then $E=0$ is in $\mcal{E}(C,B)$.  If $C$ is nonsingular, we choose any
-  $\vec{y} \neq \vec{0}$ satisfying $B\vec{y} \neq \vec{0}$ and define
-  $\vec{x}$ by $C\vec{x} = B\vec{y}$.  This guarantees $\vec{x}\neq \vec{0}$.
-  Let $E = \vec{y}\vec{x}^\H / \|\vec{x}\|_2^2$ so that
-  \begin{equation*}
-    C - BE = C - \frac{1}{\|\vec{x}\|_2^2} C\vec{x} \vec{x}^\H =
-    C \left( I - \frac{1}{\|\vec{x}\|_2^2} \vec{x} \vec{x}^\H\right),
-  \end{equation*}
-  which has $\vec{x}$ as a null vector.
-
-  It is easily seen that the complement
-  $\mathcal{E}(C,B) = \left\{ E \mid \mbox{$C - B E$ is nonsingular} \right\}$
-  is open, so that $\mcal{E}(C,B)$ is closed.  Given $E_1 \in \mcal{E}(C,B)$,
-  the set 
-  \begin{equation*}
-    \mcal{F}(C,B) = \left\{ E \mid \mbox{$C - B E$ is singular and $\|E\| \leq \|E_1\|$}
-    \right\}
-  \end{equation*}
-  is similarly seen to be closed, so it is compact and contains $E_0$ of
-  minimal norm, which is then also of minimal norm of all $E\in \mcal{E}(C,B)$.
-\end{proof}
-
-We are interested in the case $C = A-\sigma B$.  Assuming $A$ and $B$ are given
-and $\sigma \in \C$, we can define
-\begin{equation}
-  \label{eq:delta_def}
-  \delta(\sigma) 
-  = \min_{A-\sigma B - BE\,\text{is singular}} \|E\|_2
-  = \min_{E \in \mcal{E}(A-\sigma B, B)} \|E\|_2
-\end{equation}
-The quantity $\delta(\sigma)$ measures the smallest $\|E\|_2$ for which
-$\sigma$ is an eigenvalue of $(A-BE, B)$.
-
-For $\epsilon \geq 0$ we can define
-\begin{equation}
-  \label{eq:pseudo_def}
-  \Lambda_\epsilon = \left\{ \sigma \in \C \mid \delta(\sigma) < \epsilon
-  \right\}.
-\end{equation}
-When $B$ happens to be nonsingular, this is the $\epsilon$-pseudospectrum of
-$B^{-1}A$.  The set of finite generalized eigenvalues of $(A,B)$ is given by
-$\Lambda_0$.  For $\epsilon \geq 0$, $\Lambda_\epsilon$ contains the finite
-generalized eigenvalues of $(A,B)$.
-
-If $B$ is nonsingular and $\sigma$ is not an eigenvalue of $B^{-1}A$, then it
-is well known that $\sigma$ is in the $\epsilon$-pseudospectrum of $B^{-1}A$ if
-and only if $\|(B^{-1}A - \sigma I)^{-1}\|_2 > 1/\epsilon$.  This is
-equivalent to $\delta(\sigma) = 1/\|(B^{-1}A - \sigma I)^{-1}\|_2$.
-The following lemma reformulates this result to avoid assuming
-invertibility of $B$.
-\begin{lemma}
-  \label{lm:X_norm_bound}
-  With $\delta(\sigma)$ defined as in \eqref{eq:delta_def}, we have
-  \begin{equation*}
-     \delta(\sigma) 
-     = 
-     \left\{
-       \begin{array}{ll}
-         \frac{1}{\|(A-\sigma B)^{-1} B\|_2}, & \sigma \notin \Lambda(0) \\
-         0, & \mbox{otherwise} \\
-       \end{array}
-     \right..
-  \end{equation*}
-\end{lemma}
-\begin{proof}
-  If $A-\sigma B$ is singular, it is clear from \eqref{eq:pseudo_def}
-  and \eqref{eq:delta_def} that $\delta(\sigma)=0$.  If $A-\sigma B$
-  is nonsingular we consider the generalized singular value
-  decomposition
-  \begin{equation*}
-    A - \sigma B = S I U^\H,\eqand
-    B = S D V^\H
-  \end{equation*}
-  where $S=(A-\sigma B)U$ is invertible,
-  $(A-\sigma B)^{-1} B = U D V^\H$, $U$ and $V$ are unitary, and
-  $D = \diag(d_1, \ldots, d_n)$ with $d_1 > 0$ and $d_k\geq 0$
-  nonincreasing for $k=1,2,\ldots, n$.   Clearly
-  $A-\sigma B - BE = S (I - D V^\H E U) U^\H$ is
-  singular if and only if $(I - D V^\H E U)$ is singular which implies
-  that $\|E\|_2 \|D\|_2 \geq 1$ and
-  \begin{equation*}
-    \delta(\sigma)
-    \geq \frac{1}{d_1} =
-    \frac{1}{\|(A-\sigma B)^{-1}B\|_2}.
-  \end{equation*}
-  Let  
-  \begin{equation*}
-    \hat{E} = \frac{1}{d_1}V \vec{e}_1 \vec{e}_1^\H U^\H.
-  \end{equation*}
-  Then
-  \begin{equation*}
-    A-\sigma B - B \hat{E} = S (I-\vec{e}_1 \vec{e}_1^\H) U^\H
-  \end{equation*}
-  is singular so that
-  \begin{equation*}
-    \delta(\sigma)
-    \leq \|\hat{E}\|_2 
-    = \frac{1}{d_1} = \frac{1}{\|(A-\sigma B)^{-1} B\|_2}.
-  \end{equation*}
-\end{proof}
-
-If $B^{-1}A$ is normal then it is easily seen that
-$\delta(\sigma) = \min_i |\lambda_i - \sigma|$, where the minimum is taken over
-all generalized eigenvalues $\lambda_i$ of $(A,B)$.  This also generalizes to
-the case in which $B$ is singular.
-\begin{lemma}
-  \label{lm:normal_eig_bound}
-  Assume that $A$ and $B$ have no common null space and $B\neq 0$.  If the pair
-  $(A,B)$ has an orthonormal basis of generalized eigenvectors $\vec{v}_i$,
-  $i = 1, \ldots, n$, then
-  \begin{equation}
-    \label{eq:normal_delta}
-    \delta(\sigma) = \min_i |\lambda_i - \sigma|.
-  \end{equation}
-\end{lemma}
-\begin{proof}
-  The claim follows immediately with $\delta(\sigma)=0$ if $\sigma$ is a
-  generalized eigenvalue of $(A,B)$.  We assume that this is not the case so
-  that $A-\sigma B$ is nonsingular.  Let $V$ be the unitary matrix with $i$th
-  column $\vec{v}_i$.  For each generalized eigenvector we have
-  $\beta_i A\vec{v}_i = \alpha_i B \vec{v}_i$, where regularity ensures that we
-  do not have both $A\vec{v}_i=\vec{0}$ and $B\vec{v}_i= \vec{0}$.  It follows
-  that the set $\{A\vec{v}_i, B\vec{v}_i\}$ spans a subspace of dimension one.
-  Let $\vec{s}_i\neq \vec{0}$ be in this space and let $S$ be the matrix with
-  $i$th column $\vec{s}_i$.  We then have
-  \begin{equation*}
-    AV = S D_a, \eqand
-    BV = S D_b
-  \end{equation*}
-  for some diagonal matrices $D_a$ and $D_b$.  Thus
-  \begin{equation*}
-    (A-\sigma B) V = S (D_a - \sigma D_b).
-  \end{equation*}
-  Since $A-\sigma B$ is nonsingular and $V$ is unitary, $S$ must be
-  nonsingular.  Let the diagonal elements of $D_a$ be $\hat{\alpha}_i$ and
-  those of $D_b$ be $\hat{\beta}_i$ for $i=1,\ldots, n$.  We have
-  \begin{align*}
-    A - \sigma B - BE 
-    & = S (D_a - \sigma D_b - D_b V^\H E V) V^\H \\
-    & = S (D_a - \sigma D_b)\left( I - (D_a - \sigma D_b)^{-1} D_b V^\H E V \right) V^\H.
-  \end{align*}
-  This is singular only if $I - (D_a - \sigma D_b)^{-1} D_b V^\H E V$ is singular
-  which implies
-  \begin{equation*}
-    \|(D_a - \sigma D_b)^{-1} D_b\|_2 \|V^\H E V\|_2 \geq \|(D_a - \sigma D_b)^{-1} D_b V^\H E V\|_2 \geq 1.
-  \end{equation*}
-  We have
-  \begin{equation*}
-    (D_a - \sigma D_b)^{-1} D_b = \diag\left(\frac{1}{(\lambda_1-\sigma)},
-      \ldots, \frac{1}{(\lambda_n-\sigma)}\right)
-  \end{equation*}
-  so that
-  \begin{equation}
-    \label{eq:E_lower_bound}
-    \|E\|_2 \geq\frac{1}{\|(D_a - \sigma D_b)^{-1} D_b\|_2} 
-    = \frac{1}{\max_i 1/|\lambda_i - \sigma|} = \min_i |\lambda_i - \sigma|.
-  \end{equation}
-  The pair $(A,B)$ has a finite generalized eigenvalue for each $\hat{\beta}_i$
-  satisfying $\hat{\beta}_i\neq 0$.  Since $B = S D_b V^\H\neq 0$, we must have
-  at least one nonzero $\hat{\beta}_i$ so that $\min_i |\lambda_i - \sigma|$ is
-  finite.  Without loss of generality, assume that the columns of $V$ and $S$
-  are permuted so that $|\lambda_1 - \sigma| = \min_i |\lambda_i - \sigma|$ and
-  $\hat{\beta}_1\neq 0$.  Then
-  \begin{equation*}
-    E = \frac{\hat{\alpha}_1 - \sigma \hat{\beta}_1}{\hat{\beta}_1} V \vec{e}_1 \vec{e}_1^\T V^\H =
-    (\lambda_1 - \sigma) V \vec{e}_1 \vec{e}_1^\T V^\H
-  \end{equation*}
-  ensures that $ I - (D_a - \sigma D_b)^{-1} D_b V^\H E V$ is singular with
-  $\vec{e}_1$ as a null vector.  Hence $A-\sigma B - BE$ is singular and, since
-  it achieves the lower bound (\ref{eq:E_lower_bound}), this choice of $E$ also
-  has minimal norm.
-\end{proof}
 
 We return to the quantity $K_2(A-\sigma B, B)$ defined in (\ref{eq:K2_def}).
 From Lemma~\ref{lm:X_norm_bound} we know that
@@ -540,36 +668,6 @@ the upper bound in \eqref{eq:K2_delta_ident} are analogous to
 $K_2(A-\sigma B, B)$ remains moderate if $\hat{\delta}(\hat{\sigma})$ is not
 too small relative to $|\hat{\sigma}|$.
 
-Finally, we can bound $K_2(A-\sigma B, B)$ in terms of the condition number of
-the matrix of generalized eigenvectors.
-\begin{lemma}
-  \label{lm:bauer_fike_bound}
-  Let $B\neq 0$ and $\sigma \notin \Lambda_0$.  Assume that the columns of $V$ give a
-  complete set of eigenvectors for $(A,B)$.  Then
-  \begin{equation*}
-    K_2(A-\sigma B, B) 
-    \leq \kappa_2(V) \frac{\|\hat{A} - \hat{\sigma} \hat{B}\|_2}
-    {\min_i |\hat{\lambda}_i - \hat{\sigma}|}
-    = \kappa_2(V) \frac{1+|\hat{\sigma}|}{\min_i |\hat{\lambda}_i - \hat{\sigma}|}
-    = \kappa_2(V) \frac{1+1/|\hat{\sigma}|}{\min_i |1 - \hat{\lambda}_i / \hat{\sigma}|}.
-  \end{equation*}
-\end{lemma}
-\begin{proof}
-  The proof uses the same approach as the start of the proof of
-  Lemma~\ref{lm:normal_eig_bound}.  Let
-  $\beta_i A \vec{v}_i = \alpha_i B \vec{v_i}$ with $\alpha_i$ and $\beta_i$ no
-  both zero.  As in Lemma~\ref{lm:normal_eig_bound} we can construct an $S$
-  such that $A V = SD_a$ and $BV= SD_b$ where the diagonal elements of $D_a$
-  are $\hat{\alpha}_i$ and those of $D_b$ are $\hat{\beta}_i$.  We then have
-  \begin{multline*}
-    \|(A-\sigma B)^{-1} B\|_2
-    = \|V (D_a - \sigma D_b)^{-1} D_b V^{-1}\|_2
-    \leq \kappa_2(V) \|(D_a - \sigma D_b)^{-1} D_b \|_2 \\
-    = \kappa_2(V) \frac{1}{\min_i | \lambda_i - \sigma|}.
-  \end{multline*}
-  The bounds involving scaled matrices and quantities are given by the same
-  manipulation we have used in \eqref{eq:upper_bound_for_lower_bound}.
-\end{proof}
 
 \section{Algorithm and Error Analysis}
 \label{sec:algor-error-analys}

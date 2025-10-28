@@ -5,49 +5,55 @@
 \usepackage{mathtools}
 \usepackage{amsmath}
 % \usepackage{amsthm}
-\usepackage{amsfonts}\usepackage{bm}
+\usepackage{amsfonts}
+\usepackage{bm}
 \usepackage{amssymb}
 \usepackage{bbold}
 \usepackage{algorithm}
 \usepackage[noEnd=false,indLines=false]{algpseudocodex}
-\usepackage{colortbl}\usepackage{multirow}\usepackage{url}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{url}
 \usepackage{placeins}
 \usepackage{hhline}
-%\usepackage{colonequals}
-\usepackage{tikz}
-\renewcommand{\topfraction}{1}
-\renewcommand{\bottomfraction}{1}
-\renewcommand{\textfraction}{0}
+% \usepackage{colonequals}
+% \usepackage{tikz}
+% \usepackage{pgfplots}
+% \usepgfplotslibrary{fillbetween}
+% \usepackage{graphicx}
 \DeclareMathOperator*{\argmin}{arg\,min}
-\def\R{\mathbb{R}}\def\C{\mathbb{C}}\def\N{\mathbb{N}}
-\def\P{\mathbb{P}}\def\Z{\mathbb{Z}}
-\def\alt{\mathrel{\raisebox{-.75ex}{$\mathop{\sim}\limits^{\textstyle <}$}}}
-\def\ctp{^{\rm H}}\def\dia{{\rm diag}}\def\fro{_{\rm F}}\def\trp{^{\rm T}}
-\def\trace{\operatorname{tr}}
-\def\adj{^{*}}
-\def\inv{^{-1}}\def\itp{^{\rm -T}}\def\unv{{\bf e}}\def\exc{{\rm exc}}
-\def\real{\mbox{\rm Re}}\def\imag{\mbox{\rm Imag}}
-\def\qed{\rule{1.2ex}{1.2ex}}\def\conj#1{\overline{#1}}
-\def\fl{\mbox{fl}}\def\op{\, \mbox{op}\,}\def\sign{\mbox{sign}}
-\def\eqand{\qquad\mbox{and}\qquad}
-\def\rank{{\rm rank}}
-\def\range{{\cal R}}
-\def\nullspace{{\cal N}}
-\def\vec#1{{\boldsymbol #1}}
-\def\T{{\rm T}}
-\def\pT{{\prime\, \T}}
-\def\H{{\rm H}}
-\def\th#1{\tilde{\hat{#1}}}
-\def\e#1{{\times}10^{#1}}
-\def\diag{\mbox{diag}}
-\def\mcal{\mathcal}
-
-\newenvironment{mtx}[1]{\left[\begin{array}{#1}}{\end{array}\right]}
+% \DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\real}{Re}
+\DeclareMathOperator{\imag}{Imag}
+\DeclareMathOperator{\fl}{fl}
+\DeclareMathOperator{\sign}{sign}
+% \DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\trace}{Tr}
+\newcommand{\R}{\mathbb{R}}\newcommand{\C}{\mathbb{C}}\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\qed}{\rule{1.2ex}{1.2ex}}
+\newcommand{\eqand}{\qquad\text{and}\qquad}
+\newcommand{\eqor}{\qquad\text{or}\qquad}
+\newcommand{\conj}[1]{\overline{#1}}
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+\newcommand{\T}{\mathrm{T}}
+\renewcommand{\H}{\mathrm{H}}
+\newcommand{\mcal}{\mathcal}
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{corollary}{Corollary}
 \newtheorem{example}{Example}
 
+% Add optional column specifiers for matrix environments.
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
 % Put paragraph indentation in enumerate environment.
-\let\oldenumerate=\enumerate
-\renewenvironment{enumerate}{\oldenumerate\parindent=1.5em}{\endlist}
+% \let\oldenumerate=\enumerate
+% \renewenvironment{enumerate}{\oldenumerate\parindent=1.5em}{\endlist}
 
 \bibliographystyle{siam}
  \title{Pseudospectra and the Shift and Invert Solution

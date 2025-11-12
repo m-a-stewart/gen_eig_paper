@@ -256,94 +256,216 @@ section~\ref{sec:residual-bounds}.
 \section{Pseudospectra of $(A,B)$}
 \label{sec:pseudospectra}
 
-In this section, we consider the choice of shift and its impact on
-$K_2(A-\sigma B, B)$.  A rough summary of where we will end up is that we can
-expect to have useful error bounds when $\sigma$ is not in the
-$\epsilon$-pseudospectrum of $B^{-1}A$ for small $\epsilon$.  However, we do
-not want to assume that $B$ is nonsingular.  Typically one would declare that
-$\sigma$ is in the $\epsilon$-pseudospectrum of $B^{-1}A$ if there exists $E$
-with $\|E\|_2 < \epsilon$ for which $\sigma$ is an eigenvalue of
-$B^{-1} A - E$.  Instead, we say that $\sigma$ is in the
-$\epsilon$-pseudospectrum of $(A,B)$ if there exists $E$ with
-$\|E\|_2 < \epsilon$ for which $\sigma$ is a generalized eigenvalue of
-$(A - BE, B)$.  The definitions are equivalent when $B$ is invertible but
-latter does not require invertibility.  We expand on this idea and will show
-that other known properties of pseudospectra can be formulated so as to avoid
-inversion of $B$.
+In this section, we consider the generalized $\epsilon$-pseudospectrum of
+$(A,B)$.  Our motivation is that the pseudospectrum largely determines whether
+it is feasible to find a shift $\sigma$ to moderate $K_2(A-\sigma B, B)$.  A
+rough summary of where we will end up is that we can expect to have useful
+error bounds when $\sigma$ is not in the $\epsilon$-pseudospectrum of $B^{-1}A$
+for small $\epsilon$.  However, we do not want to assume that $B$ is
+nonsingular.  We will instead reformulate standard results on pseudospectra so
+as to avoid inversion of $B$.  The presentation is heavily influenced by
+section~2 of \cite{trem:05}.
 
-This approach to defining the pseudospectrum for generalized eigenvalue
-problems is very straight-forward, but seems to be distinct from what we have
-seen elsewhere.  In \cite{hiti:02}, both $A$ and $B$ are perturbed, which means
-ythat when $B$ is nonsingular, the results do not match the pseudospectrum of
+This approach is direct, but it seems to be distinct from what we have seen
+elsewhere.  In \cite{hiti:02}, both $A$ and $B$ are perturbed, which means that
+when $B$ is nonsingular, the results do not match the pseudospectrum of
 $B^{-1}A$.  In \cite{emke:17}, a Schur factorization is used to isolate zero
 eigenvalues of $(A-\sigma B)^{-1}B$, corresponding to infinite eigenvalues of
-$(A,B)$ in a nilpotent block in order to remove them from consideration.
-Several other approaches are described in \cite{trem:05}, none of which is
-equivalent to what we consider.
+$(A,B)$, in a nilpotent block in order to remove them from consideration.  We
+do not remove infinite eigenvalues in this way, but we do focus on
+$\|(A-\sigma B)^{-1}B\|$ as a replacement for the resolvent norm when defining
+generalized pseudospectra.  Several other approaches are described in
+\cite{trem:05}, none of which is equivalent to what we consider.
 
 Let $\widehat{\C} = \C\cup \{\infty\}$ and let
 $\Lambda_0(A,B)\subseteq \widehat{\C}$ denote the set of generalized
 eigenvalues of $(A,B)$.  We assume throughout that $(A,B)$ is a regular pair.
-We adopt several conventions for dealing with expressions involving $\infty$.
-In particular, along with $1/\infty = 0$ and $1/0=\infty$, we assume that
-\begin{equation*}
-\text{$\|(A-\sigma B)^{-1}B\|_2 = \infty$ for
-$\sigma\in\Lambda_0(A,B)$},
-\end{equation*}
+We assume that $\|\cdot\|$ represents a vector norm and also the corresponding
+induced matrix norm.  We adopt several conventions for dealing with inverses of
+singular matrices, infinite generalized eigenvalues, and expressions involving
+$\infty$.  Along with $1/\infty = 0$ and $1/0=\infty$, our results are stated
+with assuming that
+\begin{equation}
+  \label{eq:convention-inf-resolvent}
+  \text{$\|(A-\sigma B)^{-1}B\| = \infty$ for
+    $\sigma\in\Lambda_0(A,B)$},
+\end{equation}
 and
-\begin{equation*}
-\text{$\|(A-\infty B)^{-1}B\|_2 = 0$ for $\infty \notin \Lambda_0(A,B)$.}
-\end{equation*}
-
-We will use the fact that the pair $(A-\sigma B,B)$ has a generalized singular
-value decomposition
 \begin{equation}
-  \label{eq:gen-svd}
-  A -\sigma B = S \Sigma_a U^\H, \eqand
-  B = S \Sigma_b V^\H,
+  \label{eq:convention-infinite-shift}  
+  \text{$\|(A-\infty B)^{-1}B\| = 0$ for $\infty \notin \Lambda_0(A,B)$.}
 \end{equation}
-where $\Sigma_a$ and $\Sigma_b$ are diagonal, $S$ is nonsingular, and $U$ and
-$V$ are unitary, \cite{pasa:81, vloa:76}.  If $\sigma \notin \Lambda_0(A,B)$ so
-that $A-\sigma B$ is nonsingular, then the columns of $S$ can be scaled so that
-$\Sigma_a = I$.  If $B$ is invertible, then the singular values of
-$B^{-1} (A-\sigma B)$ are the diagonal elements $s_i$ for $i=1,2,\ldots, n$ of
-$\Sigma_b^{-1}\Sigma_a$.  These are the generalized singular values of
-$(A-\sigma B, B)$.  If $B$ has rank $r<n$ with
-$\Sigma_b = \Sigma_{b,1}\oplus 0_{n-r\times n-r}$ and
-$\Sigma_{a} = \Sigma_{a,1} \oplus \Sigma_{a, 2}$ where $\Sigma_{a, 1}$ is
-$r\times r$, then the finite generalized singular values of $(A-\sigma B, B)$
-are the diagonal elements $s_i$ of $\Sigma_{b,1}^{-1} \Sigma_{a,1}$ for
-$i=1,2,\ldots, r$ and there are $n-r$ infinite generalized singular values
-$s_i=\infty$ for $i=r+1, \ldots, n$ corresponding to the zero diagonal elements
-of $\Sigma_b$.
-
-For $0 < \epsilon < \infty$, we define the $\epsilon$-pseudospectrum of $(A,B)$
-by
+As can be seen from the Weierstrass canonical form \cite{gant:59} of the
+regular pair $(A,B)$, these identities are mostly what one would expect as the
+limit of $\|(A-\sigma B)^{-1}B\|$ as $\sigma$ approaches a generalized
+eigenvalue or as $\sigma$ approaches $\infty$ when
+$\infty\notin\Lambda_0(A,B)$.  The exception is that if
+$\sigma \in \Lambda_0(A,B)$ and the blocks in the Weierstrass form associated
+with the generalized eigenvalue $\infty$ are all $1\times 1$ or $2\times 2$,
+then $\|(A-\sigma B)^{-1}B\|$ remains bounded as $\sigma$ approaches $\infty$.
+The case $B=0$ is a simple example.  In any identify of the form
+$(A-\sigma B)\vec{v} = \vec{u}$, we interpret the case
+$(A-\infty B)\vec{v} = \vec{u}$ as equivalent to
+$\lim_{\sigma \rightarrow \infty} (A-\sigma B)\vec{v} = \vec{u}$.  That is
 \begin{equation}
-  \label{eq:pseudo_def}
-  \Lambda_\epsilon(A,B) = \left\{ \sigma \in \widehat{\C} :
-    \text{$\sigma \in \Lambda_0(A-BE, B)$ for some $E$
-      with $\|E\|_2 < \epsilon$} \right\}.
+  \label{eq:convention-inf-dominates}
+  \text{$(A-\infty B) \vec{v} =\vec{u}$ is equivalent to $B\vec{v}=\vec{0}$ and $A\vec{v}=\vec{u}$.}
 \end{equation}
+
+We will follow \cite{trem:05} in stating and proving the equivalence of several
+definitions of the $\epsilon$-pseudospectrum.  The first definition is as follows.
+\begin{definition}
+  \label{def:pseudo-def-pert1}
+  For $0 \leq \epsilon < \infty$,
+  we define the $\epsilon$-pseudospectrum of $(A,B)$ by
+  \begin{equation}
+    \label{eq:pseudo-def-pert1}
+    \Lambda_\epsilon(A,B) = \left\{ \sigma \in \widehat{\C} :
+      \text{$\sigma \in \Lambda_0(A-BE, B)$ for some $E$
+        with $\|E\| \leq \epsilon$} \right\}.
+  \end{equation}
+\end{definition}
 When $B$ happens to be nonsingular, this is easily seen to be the
-$\epsilon$-pseudospectrum of $B^{-1}A$ \cite{trem:05}.  The pair $(A-BE, B)$
-has infinite generalized eigenvalues if and only if $B$ is singular and, hence,
-if and only if $(A, B)$ has infinite eigenvalues.  It follows that for any
-$\epsilon > 0$, $\infty \in \Lambda_\epsilon(A,B)$ if and only if
-$\infty \in \Lambda_0(A,B)$.  If we define
+$\epsilon$-pseudospectrum of $B^{-1}A$ \cite{trem:05}.  Note that we do not
+follow then convention from \cite{trem:05} of using the strict inequality
+$\|E\| < \epsilon$.  Strict inequalities may be more natural in some
+applications, but we will find that the non-strict inequalities simplify the
+handling of infinite generalized eigenvalues.
+
+The pair $(A-BE, B)$ has infinite generalized eigenvalues if and only if $B$ is
+singular and, hence, if and only if $(A, B)$ has infinite eigenvalues.  It
+follows that for any $\epsilon > 0$, $\infty \in \Lambda_\epsilon(A,B)$ if and
+only if $\infty \in \Lambda_0(A,B)$.  From this, it can be seen that
+perturbations of the form $(A-BE, B)$ do not change the geometric multiplicity
+of $\infty$.  However, it can easily be seen that the algebraic multiplicity
+can change.  If $Z$ is the $n\times n$ up-shift matrix with ones on the first
+superdiagonal, then in the Weierstrass form, $\infty$ is a generalized
+eigenvalue of $(I,Z)$ with geometric multiplicity one and algebraic
+multiplicity $n$.  However if we set $E=Z^\T$, then $(I-ZZ^\T, Z)$ has
+eigenvalue $\infty$ with algebraic multiplicity one and eigenvalue zero with
+geometric multiplicity $n-1$.
+
+The next definition of $\Lambda_\epsilon(A,B)$ is the following
+\begin{definition}
+  \label{def:pseudo-vector}
+  For $0\leq \epsilon < \infty$, we define $\Lambda_\epsilon(A,B)$ to be the
+  set of all $\sigma \in \widehat{C}$ such that
+  \begin{equation*}
+    (A-\sigma B) \vec{v} = B\vec{w}
+  \end{equation*}
+  for some $\vec{v}$ and $\vec{w}$ satisfying $\|\vec{v}\|=1$ and
+  $\|\vec{w}\|\leq \epsilon$.
+\end{definition}
+Finally, we have our third definition.
+\begin{definition}
+  \label{def:pseudo-resolvent}
+  For $0\leq \epsilon < \infty$, we define $\Lambda_\epsilon(A,B)$ to be the
+  set of all $\sigma \in \widehat{C}$ such that
+  \begin{equation*}
+    \|(A-\sigma B)^{-1} B\| \geq \frac{1}{\epsilon}.
+  \end{equation*}
+\end{definition}
+When $\epsilon=0$, $\sigma = \infty$, or $\sigma \in \Lambda_0(A,B)$ (so that
+$A-\sigma B$ is singular), all three definitions should be interpreted in terms
+of the conventions given above.
+
+\begin{theorem}
+  \label{th:def-equivalence}
+  Definitions~\ref{def:pseudo-def-pert1}, \ref{def:pseudo-vector}, and
+  \ref{def:pseudo-resolvent} are equivalent.
+\end{theorem}
+\begin{proof}
+  We cycle through the conditions in each definition, showing that each
+  condition implies the next.  We start with
+  Definition~\ref{def:pseudo-def-pert1} for which
+  $\sigma \in \Lambda_\epsilon(A,B)$ implies there exists $E$ with
+  $\|E\| \leq \epsilon$ and $\sigma \in \Lambda_0(A-BE,B)$.  If
+  $\sigma = \infty$, then this implies that there exists $\vec{v}$ with
+  $\|\vec{v}\|=1$ and $B\vec{v} = \vec{0}$.  Thus, using
+  \eqref{eq:convention-inf-dominates}
+  \begin{equation*}
+    (A-\sigma B) \vec{v} = \vec{0} = B\vec{w}
+  \end{equation*}
+  where $\vec{w}=\vec{0}$ so that $\|\vec{w}\|\leq \epsilon$.  If $\sigma\in\C$, then
+  there exists $\vec{v}$ with $\|\vec{v}\|=1$ such that $(A-BE)\vec{v} = \sigma B\vec{v}$
+  or $(A-\sigma B)\vec{v} = BE\vec{v} = B\vec{w}$, where $\|w\| = \|E\vec{v}\| \leq \epsilon$.
+
+  If we assume that the conditions of Definition~\ref{def:pseudo-vector} hold,
+  then we have $\vec{v}$ and $\vec{w}$ with $\|\vec{v}\|=1$,
+  $\|\vec{w}\|\leq \epsilon$, and $(A-\sigma B)\vec{v} = B\vec{w}$.  Suppose
+  that $\sigma = \infty$.  Then $A\vec{v} - B\vec{w} - \sigma B\vec{v}=\vec{0}$
+  and \eqref{eq:convention-inf-dominates} imply $B\vec{v} =\vec{0}$ so that
+  $\sigma \in \Lambda_0(A,B)$.  By \eqref{eq:convention-inf-resolvent} we then
+  have $\|(A-\sigma B)^{-1}B\|_2 = \infty$ so that
+  $\|(A-\sigma B)^{-1}B\|_2 \geq 1/\epsilon$.  If $\sigma \in \C$ and
+  $\sigma \notin \Lambda_0(A,B)$ then $A-\sigma B$ is invertible and we have
+  $\vec{v} = (A-\sigma B)^{-1} B\vec{w}$ with $\|\vec{v}\| = 1$ and
+  $\|\vec{w}\| \leq \epsilon$.  This implies that $\vec{w}\neq \vec{0}$ so that
+  $\epsilon > 0$ and that $\|(A-\sigma B)^{-1}B\| \geq 1/\epsilon$.  If $\sigma\in\C$
+  and $\sigma \in\Lambda_0(A,B)$, then \eqref{eq:convention-inf-resolvent}
+  implies $\|(A-\sigma B)^{-1}B\| = \infty \geq 1/\epsilon$.
+
+  Finally, to complete the cycle, we assume that
+  $\|(A-\sigma B)^{-1}B\| \geq 1/\epsilon > 0$ and show that this implies the
+  conditions of Definition~\ref{def:pseudo-def-pert1}.  If $\sigma = \infty$,
+  then we must have $\sigma\in\Lambda_0(A)$, since otherwise by
+  \eqref{eq:convention-infinite-shift} we would have
+  $\|(A-\sigma B)^{-1}B\|=0$.  Thus $\sigma \in \Lambda_0(A-BE, B)$ for $E=0$
+  with $\|E\|=0 \leq \epsilon$.  If $\sigma\in \C$ with
+  $\sigma\in \Lambda_0(A,B)$, then we can also set $E=0$.  Suppose that
+  $\sigma\in \C$ and $\sigma\notin \Lambda_0(A,B)$.  Then
+  $\|(A-\sigma B)^{-1}B\|<\infty$ and from
+  $\|(A-\sigma B)^{-1}B\| \geq 1/\epsilon$, we see that $\epsilon\neq 0$ and
+  that there exists $\vec{v}$ such that $(A-\sigma B)^{-1}B \vec{v} = \vec{y}$
+  with $\|\vec{y}\| \geq 1/\epsilon$ and $\|\vec{v}\| = 1$.  It follows that
+  $(A-\sigma B) \vec{y} = B\vec{v}$.  Let $\|\cdot\|_*$ be the dual norm of
+  $\|\cdot\|$.  If we have $\vec{x}$ with
+  $\vec{x}^\H \vec{y} = 1 = \|\vec{x}\|_* \|\vec{y}\|$, then for
+  $E = -\vec{v} \vec{x}^\H$ we have $(A-BE - \sigma B) \vec{y} = 0$ and
+  $\|E\| = \|\vec{v}\| \|\vec{x}\|_* \leq \|\vec{v}\| /\|\vec{y}\| \leq
+  \epsilon$.  The existence of $\vec{x}$ with the desired property is
+  guaranteed by duality, \cite{hojo:85}.
+\end{proof}
+
+If we define
 \begin{equation*}
   \mcal{E}(A,B,\sigma) = \{E : \sigma \in \Lambda_0(A- BE, B)\},
 \end{equation*}
-then we can restate \eqref{eq:pseudo_def} as
-\begin{equation*}
+then we can restate \eqref{eq:pseudo-def-pert1} as
+\begin{equation}
+  \label{eq:pseudo-def-pert2}
   \Lambda_\epsilon(A,B) = \left\{ \sigma \in \widehat{\C} :
-    \text{there exists $E\in \mcal{E}(A,B,\sigma)$ with $\|E\|_2 < \epsilon$} \right\}.
-\end{equation*}
+    \text{there exists $E\in \mcal{E}(A,B,\sigma)$ with $\|E\| \leq \epsilon$} \right\}.
+\end{equation}
 It is not difficult to see that $\mcal{E}(A,B,\sigma)$ is closed for all
 $\sigma \in \widehat{C}$.  The set $\mcal{E}(A,B,\sigma)$ has the inconvenient
-property that it may be empty.  The analogous set for the ordinary
-$\epsilon$-pseudospectrum of $A$ is $\{E : \text{$\sigma$ is an eigenvalue of
-  $A-E$}\}$ and it is never empty.
+property that it may be empty.  This happens if there is no $E$ that makes
+$\sigma$ a generalized eigenvalue of $(A-BE, B)$.  The analogous set for the
+ordinary $\epsilon$-pseudospectrum of $A$ is $\{E : \text{$\sigma$ is an
+  eigenvalue of $A-E$}\}$ and it is never empty.  The following corollary of
+Theorem~\ref{th:def-equivalence} clarifies when $\mcal{E}(A,B,\sigma)$ is
+empty.
+\begin{corollary}
+  \label{co:empty-E}
+  The set $\mcal{E}(A,B,\sigma)$ is empty if and only if
+  \begin{equation*}
+    B=0\eqand \sigma \in \C
+  \end{equation*}
+  or
+  \begin{equation*}
+    \text{$B$ is nonsingular and $\sigma = \infty$}
+  \end{equation*}
+\end{corollary}
+\begin{proof}
+  From the equivalence of Definition~\ref{def:pseudo-def-pert1} and
+  Definition~\ref{def:pseudo-resolvent} we know that $\mcal{E}(A,B,\sigma)$ is
+  empty if and only if $\|(A-\sigma B)^{-1}B\|$ is zero.  Considering
+  \eqref{eq:convention-inf-resolvent} and \eqref{eq:convention-infinite-shift},
+  this can happen only in two cases: if \eqref{eq:convention-infinite-shift}
+  applies, that is $\sigma=\infty$ and $B$ is nonsingular so that
+  $\infty\notin\Lambda_0(A,B)$; or if \eqref{eq:convention-inf-resolvent} $B=0$
+  and neither applies.
+\end{proof}
 
 Let
 \begin{equation}
@@ -357,152 +479,52 @@ nonempty then $\delta(A, B, \sigma) < \infty$ so that $\mcal{E}(A,B,\sigma)$ is
 empty if and only if $\delta(A,B,\sigma)=\infty$.  It is also clear that for
 $\sigma \in \widehat{\C}$, if $\sigma \in \Lambda_0(A,B)$, then
 $\delta(A,B,\sigma)=0$.  We refer to $\delta(A,B,\sigma)$ as the
-\textit{pseudospectral separation} of $\sigma$ from $\Lambda_0(A,B)$.  The
-definition of $\delta(A,B,\sigma)$ gives another way to restate \eqref{eq:pseudo_def}:
+\textit{pseudospectral separation} of $\sigma$ from $\Lambda_0(A,B)$.
+
+The definition of $\delta(A,B,\sigma)$ gives another way to restate
+\eqref{eq:pseudo-def-pert1}:
 \begin{equation}
   \label{eq:pseudo-def-delta}
   \Lambda_\epsilon(A,B) = \left\{ \sigma \in \widehat{\C} 
     : \delta(A,B,\sigma) < \epsilon\right\}.
 \end{equation}
 To see this, we note that if $\sigma\in \Lambda_{\epsilon}(A,B)$, then there
-exists $E$ with $\|E\|_2 < \epsilon$ and $E \in \mcal{E}(A,B,\sigma)$ so that
-$\delta(A,B,\sigma) \leq \|E\|_2 < \epsilon$.  Conversely, if
-$\delta(A,B,\sigma) = \epsilon_0 < \epsilon$, then $\mcal{E}(A,B,\sigma)$ is
+exists $E \in \mcal{E}(A,B,\sigma)$ with $\|E\| \leq \epsilon$ so that
+$\delta(A,B,\sigma) \leq \|E\| \leq \epsilon$.  Conversely, if
+$\delta(A,B,\sigma) = \epsilon_0 \leq \epsilon$, then $\mcal{E}(A,B,\sigma)$ is
 nonempty and there exists $E_0\in\mcal{E}(A,B,\sigma)$ with
-$\|E_0\|_2 < \epsilon$ so that $\sigma \in \Lambda_\epsilon(A,B)$.
-
-The cases in which $\mcal{E}(A,B,\sigma)$ is empty (equivalently
-$\delta(A,B,\sigma)=\infty$) are characterized in the following theorem.  The
-cases are precisely those in which no choice of $E$ will make $\sigma$ a
-generalized eigenvalue of $(A-BE, B)$.
-\begin{theorem}
-  \label{th:E-empty}
-  For regular $(A,B)$, the set $\mcal{E}(A,B,\sigma)$ is empty if and only if
-  one of the following conditions holds
-  \begin{equation*}
-    \text{$\sigma=\infty$ and $B$ is nonsingular}, \eqor
-    \text{$\sigma=\C$ and $B = 0$}.
-  \end{equation*}
-\end{theorem}
-\begin{proof}
-  The first case implies that $\mcal{E}(A,B,\sigma)$ is empty because there is
-  no way that $(A-BE,B)$ can have an infinite generalized eigenvalue when $B$
-  is nonsingular.  The second case implies $\mcal{E}(A,B,\sigma)$ is empty
-  because if $B=0$ regularity of $(A,B)$ implies that $A$ must be nonsingular
-  so that there is no way that $(A-BE, B) = (A,0)$ can have a finite
-  generalized eigenvalue satisfying $A\vec{x} = \lambda B\vec{x} = \vec{0}$.
-
-  The negation of the two conditions of the theorem corresponds to three cases:
-  \begin{equation*}
-    \text{$\sigma = \infty$ and $B$ is singular}; \quad
-    \text{$B$ is singular and $B\neq 0$}; \quad\text{or}\quad
-    \text{$\sigma \in \C$ and $B\neq 0$}.
-  \end{equation*}
-  The middle case implies one of the two others depending on whether
-  $\sigma\in\C$ or $\sigma=\infty$, so that we need to consider only the first
-  and the last cases.  We show that if either of these hold, then
-  $\mcal{E}(A,B,\sigma)$ is nonempty.  The first condition is trivial, since if
-  $B$ is singular, then $\sigma = \infty$ is a generalized eigenvalue of
-  $(A-BE, B)$ for any $E$.  For the third condition, if
-  $\sigma \in \Lambda_0(A,B)$, then $E=0$ is in $\mcal{E}(A,B,\sigma)$.  If
-  $\sigma \notin \Lambda_0(A,B)$, then let $(A-\sigma B, B)$ have generalized
-  SVD \eqref{eq:gen-svd} with $\Sigma_a = I$.  We have
-  \begin{equation*}
-    A - BE - \sigma B = S (I -\Sigma_b V^\T E U) U^\T.
-  \end{equation*}
-  Suppose without loss of generality that $(1,1)$ element of $\Sigma_b$ is
-  the largest generalized singular value $s_1\neq 0$ of $(A-\sigma B, B)$.  Let
-  \begin{equation}
-    E = \frac{1}{s_1} V \vec{e}_1 \vec{e}_1^\T U^\T.
-  \end{equation}
-  then
-  \begin{equation*}
-     I-\Sigma_b V^\T E U = I - \frac{1}{s_1} \Sigma_b \vec{e}_1 \vec{e}_1^\T
-  \end{equation*}
-  has $\vec{e}_1$ as a null vector so that $A-BE - \sigma B$ is singular and
-  $E \in \mcal{E}(A,B,\sigma)$.
-\end{proof}
-
-If $B$ is nonsingular and $\sigma$ is not an eigenvalue of $B^{-1}A$, then it
-is well known that $\sigma$ is in the $\epsilon$-pseudospectrum of $B^{-1}A$ if
-and only if $\|(B^{-1}A - \sigma I)^{-1}\|_2 > 1/\epsilon$.  The following
-lemma reformulates this result to avoid assuming invertibility of $B$.
-\begin{theorem}
-  \label{th:resolvent_bound}
-  Let $(A,B)$ be regular.  With $\delta(A, B, \sigma)$ defined as in
-  \eqref{eq:delta_def}, we have
-  \begin{equation*}
-    \|(A-\sigma B)^{-1}B\|_2 = \frac{1}{\delta(A,B,\sigma)}.
-  \end{equation*}
-\end{theorem}
-\begin{proof}
-  If $\sigma \in \Lambda_0(A,B)$ then $1/\delta(A,B,\sigma) = \infty$ and,
-  by convention, $\|(A-\sigma B)^{-1}B\|_2 = \infty$.  So the theorem holds
-  in this case and we now assume that $\sigma \notin\Lambda_0(A,B)$.
-
-  If $\mcal{E}(A,B,\sigma)$ is empty so that $1/\delta(A,B,\sigma) =0$, then
-  one of the two conditions in Theorem~\ref{th:E-empty} hold.  If $\sigma\in\C$
-  and $B=0$, then $\|(A-\sigma B)^{-1}B\|_2 = 0$.  If $\sigma=\infty$ and $B$
-  is nonsingular, then by convention $\|(A-\infty B)^{-1}B\|_2 = 0$.
-
-  We assume now that $\mcal{E}(A,B,\sigma)$ is nonempty and
-  $\sigma \notin \Lambda_0(A,B)$.  Considering the three cases obtained from
-  the negation of the conditions of Theorem~\ref{th:E-empty}, the middle case
-  is redundant and $\sigma \notin \Lambda_0(A,B)$ rules out the first case, so
-  we can assume the third case, that $\sigma\in\C$ and $B\neq 0$.  The matrix
-  $A-\sigma B$ is nonsingular and we consider the generalized singular value
-  decomposition \eqref{eq:gen-svd} with $\Sigma_a = I$.  We have
-  $(A-\sigma B)^{-1} B = U \Sigma_b V^\H$, and without loss of generality, we
-  can assume that $\Sigma_b = \diag(b_1, \ldots, b_n)$, $b_1 > 0$, and
-  $b_k\geq 0$ is nonincreasing for $k=1,2,\ldots, n$.  We recall that the
-  diagonal elements $s_k$ of $\Sigma_b^{-1} \Sigma_a$ are the generalized
-  singular values of $(A-\sigma B, B)$, where zeros on the diagonal of
-  $\Sigma_b$ correspond to infinite generalized singular values.  We then see
-  that $s_1 = 1/b_1$ is the smallest generalized singular value of
-  $(A-\sigma B)^{-1}B$.  Clearly
-  $A - BE -\sigma B = S (I - \Sigma_b V^\H E U) U^\H$ is singular if and only
-  if $(I - \Sigma_b V^\H E U)$ is singular which implies that
-  $\|E\|_2 \geq 1/\|\Sigma_b\|_2$.  Thus $\|E\|_2 \geq 1/b_1 = s_1$ for all
-  $E\in\mcal{E}(A,B,\sigma)$ and
-  \begin{equation*}
-    \delta(A,B,\sigma)
-    = \inf_{E \in \mcal{E}(A,B,\sigma)} \|E\|_2
-    \geq s_1
-    = \frac{1}{\|(A-\sigma B)^{-1}B\|_2}.
-  \end{equation*}
-  As in the proof of Theorem~\ref{th:E-empty}, we can set
-  \begin{equation*}
-    E = s_1 V \vec{e}_1 \vec{e}_1^\H U^\H
-  \end{equation*}
-  so that $A-BE - \sigma B = S (I-\vec{e}_1 \vec{e}_1^\H) U^\H$ is singular
-  and 
-  \begin{equation*}
-    \delta(A,B,\sigma)
-    \leq \|E\|_2 
-    = s_1 = \frac{1}{\|(A-\sigma B)^{-1} B\|_2}.
-  \end{equation*}
-\end{proof}
-
-For the ordinary pseudospectrum, $\sigma\in \C$ is in the $\epsilon$-pseudospectrum
-of $A$ when $s_{\min}(A-\sigma I) < \epsilon$, where $s_{\min}$ denotes the minimum
-singular value.  The statement and proof of Theorem~\ref{th:resolvent_bound}
-shows that we have $\sigma\in\Lambda_\epsilon(A,B)$ when the smallest
-generalized singular value of $(A-\sigma B, B)$ is less than $\epsilon$.
-
-Another definition of the ordinary pseudospectrum is that $\sigma$ is in the
-$\epsilon$-pseudospectrum of $A$ when there exists some vector $\vec{v}$ with
-$\|\vec{v}\|_2=1$ and $\|(A - \sigma I)\vec{v}\|_2 < \epsilon$.  A formulation
-of this for the generalized pseudospectrum is that
-$\sigma\in\Lambda_\epsilon(A,B)$ when there exist $\vec{v}$ with
-$\|\vec{v}\|_2 = 1$ and $\vec{y}$ with $\|\vec{y}\|_2 < \epsilon$ for which
+$\|E_0\| \leq \epsilon$ so that $\sigma \in \Lambda_\epsilon(A,B)$.  It is
+also easily seen from this and Theorem~\ref{th:def-equivalence} that
 \begin{equation*}
-  (A-\sigma B) \vec{v} = B\vec{y}.
+  \|(A-\sigma B)^{-1}B\| = \frac{1}{\delta(A,B,\sigma)}.
 \end{equation*}
 
-If $B^{-1}A$ is normal then it is easily seen that
-$\delta(\sigma) = \min_i |\lambda_i - \sigma|$, where the minimum is taken over
-all generalized eigenvalues $\lambda_i$ of $(A,B)$.  This also generalizes to
-the case in which $B$ is singular.
+In the remainder of this paper we focus on $\|\cdot\| = \|\cdot\|_2$.  It is
+known that $\sigma\in \C$ is in the $\epsilon$-pseudospectrum of $A$ when
+$s_{\min}(A-\sigma I) \leq \epsilon$, where $s_{\min}$ denotes the minimum
+singular value.  We do not emphasize this characterization of the generalized
+$\epsilon$-pseudospectrum, but it can be shown that
+$\sigma\in\Lambda_\epsilon(A,B)$ when the smallest generalized singular value
+of $(A-\sigma B, B)$ is less than or equal to $\epsilon$.  In this case the
+generalized singular value decomposition takes the form
+\begin{equation*}
+  A-\sigma B = S D_a U_a^\T, \eqand
+  B = S D_b U_b^\T,
+\end{equation*}
+where $S$ is nonsingular, $U_a$ and $U_b$ are unitary, and $D_a$ and $D_b$ are
+diagonal.  The generalized singular values are the diagonal values of
+$D_b^{-1}D_a$ where a zero on the diagonal of $D_b$ corresponds to $\infty$ on
+the diagonal of $D_b^{-1}D_a$.
+
+If $B$ is nonsingular and $B^{-1}A$ is normal then it is easily seen that
+\begin{equation*}
+  \|(A-\sigma B)^{-1}\|_2 
+  = \frac{1}{\delta_2(A,B,\sigma)} 
+  = \frac{1}{\min_i|\lambda_i \sigma|},
+\end{equation*}
+where the minimum is taken over all generalized eigenvalues $\lambda_i$ of
+$(A,B)$ and $\delta_2(A,B,\sigma)$ is $\delta(A,B,\sigma)$ defined with the
+choice of 2-norm.  This also generalizes to the case in which $B$ is singular.
 \begin{lemma}
   \label{lm:normal_eig_bound}
   Assume that $(A,B)$ is a regular pair with an orthonormal basis of
@@ -510,21 +532,21 @@ the case in which $B$ is singular.
   $\sigma \in \widehat{C}$ we have
   \begin{equation}
     \label{eq:normal_delta}
-    \delta(A,B,\sigma) = \min_i |\lambda_i - \sigma|,
+    \delta_2(A,B,\sigma) = \min_i |\lambda_i - \sigma|,
   \end{equation}
   where we assume $|\lambda_i - \sigma| = 0$ if $\lambda_i=\sigma=\infty$ and
   $|\lambda_i - \sigma| = \infty$ if exactly one of $\lambda_i$ or $\sigma$
   equals $\infty$.
 \end{lemma}
 \begin{proof}
-  The claim follows immediately with $\delta(A,B,\sigma)=0$ if $\sigma$ is a
+  The claim follows immediately with $\delta_2(A,B,\sigma)=0$ if $\sigma$ is a
   generalized eigenvalue of $(A,B)$, including the case of $\sigma = \infty$.
   If $\sigma = \infty$ is not a generalized eigenvalue, then
-  $\delta(A,B,\infty)=\infty$ and $\min_i |\lambda_i -\infty| = \infty$.
+  $\delta_2(A,B,\infty)=\infty$ and $\min_i |\lambda_i -\infty| = \infty$.
 
   We consider the more interesting case $\sigma\in\C$, where
   $\sigma\notin\Lambda_0(A,B)$.  If $B=0$, then $(A,B)$ has no finite
-  generalized eigenvalues and $\delta(A,B,\sigma)=\infty$, which is consistent
+  generalized eigenvalues and $\delta_2(A,B,\sigma)=\infty$, which is consistent
   with \eqref{eq:normal_delta}.  So we assume that $B\neq 0$.  Let $V$ be the
   unitary matrix with $i$th column equal to $\vec{v}_i$.  For each generalized
   eigenvector we have $\beta_i A\vec{v}_i = \alpha_i B \vec{v}_i$, where
@@ -583,16 +605,19 @@ the case in which $B$ is singular.
   $\vec{e}_1$ as a null vector.  Hence $A-BE_0 - \sigma B$ is singular and
   $E_0\in \mcal{E}(A,B,\sigma)$.  Since $\|E_0\|_2 = |\lambda_1 -\sigma|$,
   $E_0$ achieves the lower bound (\ref{eq:E_lower_bound}), and therefore
-  $\delta(A,B,\sigma) = \|E_0\|_2 = |\lambda_1 -\sigma|$.
+  $\delta_2(A,B,\sigma) = \|E_0\|_2 = |\lambda_1 -\sigma|$.
 \end{proof}
 
+For nonnormal matrices, the following generalizes a well known result for the
+ordinary $\epsilon$-pseudospectrum \cite{trem:05}.
 \begin{lemma}
   \label{lm:bauer_fike_bound}
   Let $(A,B)$ regular.  Assume that the columns of $V$ give a complete set of
   generalized eigenvectors for $(A,B)$.  Then
   \begin{equation}
     \label{eq:bauer-fike-bound}
-    \frac{1}{\delta(A,B,\sigma)}
+    \|(A-\sigma B)^{-1}B\|_2
+    = \frac{1}{\delta_2(A,B,\sigma)}
     \leq \frac{\kappa_2(V)}{\min_i |\lambda_i - \sigma|},
   \end{equation}
   where for $\lambda_i=\infty$ or $\sigma = \infty$ we make the
@@ -600,8 +625,8 @@ the case in which $B$ is singular.
 \end{lemma}
 \begin{proof}
   The case $\sigma = \infty$ is the same as in the proof of
-  Lemma~\ref{lm:normal_eig_bound}, with $\delta(A,B,\sigma) = 0$ or
-  $\delta(A,B,\sigma)=\infty$, depending on whether $(A,B)$ has an infinite
+  Lemma~\ref{lm:normal_eig_bound}, with $\delta_2(A,B,\sigma) = 0$ or
+  $\delta_2(A,B,\sigma)=\infty$, depending on whether $(A,B)$ has an infinite
   eigenvalue.  For $\sigma\in\C$, the case $B=0$ and $\sigma\in \Lambda_0(A,B)$
   are also similar.  So we assume that $\sigma\in\C$, $B\neq 0$, and $A-\sigma B$
   is nonsingular.  The rest of the proof is also similar to the first part of
@@ -618,20 +643,51 @@ the case in which $B$ is singular.
   \end{multline*}
 \end{proof}
 
-In addition to the pseudospectral separation $\delta(A,B,\sigma)$, for
+In addition to the pseudospectral separation $\delta_2(A,B,\sigma)$, for
 $\sigma \in \C$, $\sigma\neq 0$, and $\sigma\notin\Lambda_0(A,B)$ we are
 interested in the \textit{relative pseudospectral separation}
-$\delta(A,B,\sigma)/|\sigma|$.  With normalized $\hat{A}$, $\hat{B}$, and
+$\delta_2(A,B,\sigma)/|\sigma|$.  With normalized $\hat{A}$, $\hat{B}$, and
 $\hat{\sigma}$ as in \eqref{eq:scaled_eig_shift}, we have
 \begin{equation*}
-  \frac{\delta(A,B,\sigma)}{|\sigma|}
+  \frac{\delta_2(A,B,\sigma)}{|\sigma|}
   = \frac{1}{|\hat{\sigma}|\|A\|_2 \|(A-\sigma B)^{-1}B\|_2/\|B\|_2}
   = \frac{1}{|\hat{\sigma}| \|(\hat{A}-\hat{\sigma} \hat{B})^{-1}\hat{B}\|_2}
-  = \frac{\delta(\hat{A},\hat{B},\hat{\sigma})}{|\hat{\sigma}|}.
+  = \frac{\delta_2(\hat{A},\hat{B},\hat{\sigma})}{|\hat{\sigma}|}.
 \end{equation*}
 Hence, assuming that $\sigma$ is scaled in a manner consistent with scaling of
 $A$ and $B$, the relative pseudospectral separation does not depend on the
 scaling of $A$ and $B$.
+
+It is not particularly difficult to compute the generalized
+$\epsilon$-pseudospectrum as defined here.  Computing
+$\|(A-\sigma B)^{-1}B\|_2$ plays the part of the resolvent norm.  If we start
+with a generalized Schur decomposition
+\begin{equation}
+  A = Q T_a Z^\H,\eqand
+  B = Q T_b Z^\H,
+\end{equation}
+then one can efficiently apply the Lanczos algorithm to
+\begin{equation*}
+  Q^\H (A-\sigma B)^{-1}B B^\H (A-\sigma B)^{-\H} Q
+  = (T_a - \sigma T_b)^{-1} T_b T_b^\H (T_a - \sigma T_b)^{-\H}
+\end{equation*}
+to compute $\|(A-\sigma B)^{-1}B\|_2$ with $\sigma$ chosen on a grid of points
+in $\C$.  This is essentially what is often done for the ordinary
+pseudospectrum with the ordinary Schur decomposition \cite[p. 375]{trem:05}.
+We have used this approach to generate some of the graphs in
+section~\ref{sec:numerical-examples}.
+
+Finally, we note that much of what we have done here can be extended to the
+case in which $A$ and $B$ are $m\times n$ with $m > n$.  However, in looking at
+whether $\sigma$ is a generalized eigenvector of $(A-B E, B)$, the perturbation
+$BE$ is constrained to be in the range of $B$.  While
+Definition~\ref{def:pseudo-def-pert1} and Definition~\ref{def:pseudo-vector}
+generalize readily, Definition~\ref{def:pseudo-resolvent} requires a more
+substantial modification in which we introduce a pseudoinverse and look at the
+norm of $(A-\sigma B)^{\dagger}B$ on a subspace
+$\mcal{S} = \{ \vec{s} : B\vec{s} \in \mcal{R}(A-\sigma B)\}$, where
+$\mcal{R}(X)$ denotes the range space of $X$.  Further, we are not aware of a
+natural application for this sort perturbation.
 
 \section{Pseudospectral Bounds on $K_2(A,B)$}
 \label{sec:pseud-bounds-k2}
@@ -701,7 +757,7 @@ For small scaled shifts, the absolute distance is more important.
 
 From Lemma~\ref{lm:resolvent_bound} we know that
 \begin{equation*}
-  K_2(A-\sigma B, B) = \frac{\|A-\sigma B\|_2}{\|B\|_2} \frac{1}{\delta(\sigma)}.
+  K_2(A-\sigma B, B) = \frac{\|A-\sigma B\|_2}{\|B\|_2} \frac{1}{\delta_2(\sigma)}.
 \end{equation*}
 We would prefer to have a version of this identity that
 is independent of the scaling of $A$ and $B$.  Hence
@@ -717,7 +773,7 @@ is independent of the scaling of $A$ and $B$.  Hence
     \frac{B}{\|B\|_2}\right\|_2 \nonumber \\
   & = \|\hat{A} - \hat{\sigma} \hat{B}\|_2 
     \|(\hat{A} - \hat{\sigma} \hat{B})^{-1} \hat{B}\|_2 \nonumber\\
-  & = \frac{\gamma}{\delta(\hat{A}, \hat{B}, \hat{\sigma})},\label{eq:K2-delta-ident}
+  & = \frac{\gamma}{\delta_2(\hat{A}, \hat{B}, \hat{\sigma})},\label{eq:K2-delta-ident}
 \end{align}
 where, as in section~\ref{sec:background}, $\hat{A} = A/\|A\|_2$,
 $\hat{B} = B/\|B\|_2$, and $\hat{\sigma}$ is the scaled shift in
@@ -727,9 +783,9 @@ an upper bound for $K_2(A-\sigma B, B)$.  Using the fact that
 $\gamma \leq 1 + |\hat{\sigma}|$ gives
 \begin{equation*}
   K_2(A-\sigma B, B)
-  \leq \frac{1+|\hat{\sigma}|}{\delta(\hat{A}, \hat{B}, \hat{\sigma})}
-  = \frac{1+1/|\hat{\sigma}|}{\delta(\hat{A}, \hat{B}, \hat{\sigma})/|\hat{\sigma}|}
-  = \frac{1+1/|\hat{\sigma}|}{\delta(A, B, \sigma)/|\sigma|}.
+  \leq \frac{1+|\hat{\sigma}|}{\delta_2(\hat{A}, \hat{B}, \hat{\sigma})}
+  = \frac{1+1/|\hat{\sigma}|}{\delta_2(\hat{A}, \hat{B}, \hat{\sigma})/|\hat{\sigma}|}
+  = \frac{1+1/|\hat{\sigma}|}{\delta_2(A, B, \sigma)/|\sigma|}.
 \end{equation*}
 Thus $K_2(A-\sigma B)$ can be expected to be of moderate magnitude in two
 cases: if $|\hat{\sigma}|$ is not large and the pseudospectral distance of
@@ -1150,6 +1206,9 @@ consider the stability properties of this decomposition.
     & && \quad + (1+|\hat{\sigma}|)(a_n + b_n + e_n+f_n + g_n)\Big) \|A\|_2 +O(u^2).\\
   \end{alignat*}
 \end{proof}
+
+\section{Numerical Examples}
+\label{sec:numerical-examples}
 
 
 
